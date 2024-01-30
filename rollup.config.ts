@@ -1,9 +1,5 @@
 import dts from 'rollup-plugin-dts';
-import esbuild from 'rollup-plugin-esbuild';
-import filesize from 'rollup-plugin-filesize';
 import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 const plugins = [typescript()];
@@ -11,7 +7,7 @@ const external = /node_modules/;
 
 export default [
   {
-    input: 'index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/umd/index.js',
@@ -24,7 +20,7 @@ export default [
     external,
   },
   {
-    input: 'index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/cjs/index.js',
@@ -36,7 +32,7 @@ export default [
     external,
   },
   {
-    input: 'index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/esm/index.js',
@@ -48,7 +44,7 @@ export default [
     external,
   },
   {
-    input: 'index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/index.js',
@@ -61,7 +57,7 @@ export default [
     external,
   },
   {
-    input: 'index.ts',
+    input: 'src/main/index.tsx',
     plugins: [dts(), json()],
     output: {
       file: 'lib/index.d.ts',

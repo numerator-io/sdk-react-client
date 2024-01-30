@@ -4,7 +4,7 @@
   "description": "Numerator SDK for ReactJS",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib"],
+  "files": ["lib/index.js", "lib/index.d.ts", "lib/index.d.ts.map"],
   "scripts": {
     "test": "jest",
     "test:debug": "jest --runInBand",
