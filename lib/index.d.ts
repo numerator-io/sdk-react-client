@@ -43,12 +43,12 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     data: FeatureFlagConfig[];
 }
 declare enum FlagStatusEnum {
-    ON = 0,
-    OFF = 1
+    ON = "ON",
+    OFF = "OFF"
 }
 declare enum FlagValueTypeEnum {
-    BOOLEAN = 0,
-    STRING = 1
+    BOOLEAN = "BOOLEAN",
+    STRING = "STRING"
 }
 interface FeatureFlagConfig {
     id: string;

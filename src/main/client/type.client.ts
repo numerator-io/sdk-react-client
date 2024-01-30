@@ -57,13 +57,13 @@ export interface FeatureFlagConfigListingResponse extends PaginationResponse<Fea
 
 // --- Types for Feature Flag --- //
 export enum FlagStatusEnum {
-  ON,
-  OFF,
+  ON = 'ON',
+  OFF = 'OFF',
 }
 
 export enum FlagValueTypeEnum {
-  BOOLEAN,
-  STRING,
+  BOOLEAN = 'BOOLEAN',
+  STRING = 'STRING',
 }
 
 export interface FeatureFlagConfig {
