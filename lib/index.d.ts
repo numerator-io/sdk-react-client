@@ -95,7 +95,7 @@ interface NumeratorContextType {
 interface NumeratorProviderProps {
     children: ReactNode;
     loadAllFlagsConfigOnMount?: boolean;
-    configClient?: ConfigClient;
+    configClient: ConfigClient;
 }
 
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
