@@ -11,7 +11,7 @@ const external = /node_modules/;
 
 export default [
   {
-    input: 'src/index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/umd/index.js',
@@ -24,7 +24,7 @@ export default [
     external,
   },
   {
-    input: 'src/index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/cjs/index.js',
@@ -36,7 +36,7 @@ export default [
     external,
   },
   {
-    input: 'src/index.ts',
+    input: 'src/main/index.tsx',
     output: [
       {
         file: 'lib/esm/index.js',
@@ -48,7 +48,7 @@ export default [
     external,
   },
   {
-    input: 'src/index.ts',
+    input: 'src/main/index.tsx',
     plugins: [dts(), json()],
     output: {
       file: 'lib/index.d.ts',
