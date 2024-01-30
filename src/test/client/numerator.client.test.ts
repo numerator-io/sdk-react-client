@@ -22,9 +22,9 @@ describe('NumeratorClient', () => {
     });
 
     const numeratorClient = new NumeratorClient(mockConfig);
-    const result = await numeratorClient.featureFlags();
+    const result = await numeratorClient.allFeatureFlagsConfig();
 
-    expect(result).toEqual({ count: 2, data: [{ key: 'feature1' }, { key: 'feature2' }] });
+    expect(result).toEqual([{ key: 'feature1' }, { key: 'feature2' }]);
   });
 
   it('should handle error while fetching featureFlags', async () => {
@@ -38,7 +38,7 @@ describe('NumeratorClient', () => {
     const numeratorClient = new NumeratorClient(mockConfig);
 
     // Assert that the error is thrown
-    await expect(numeratorClient.featureFlags()).rejects.toMatchObject(error);
+    await expect(numeratorClient.allFeatureFlagsConfig()).rejects.toMatchObject(error);
   });
 
   it('should handle "Feature Flag not found" error', async () => {
@@ -51,7 +51,7 @@ describe('NumeratorClient', () => {
     const numeratorClient = new NumeratorClient(mockConfig);
 
     // Assert that the "Feature Flag not found" error is thrown
-    await expect(numeratorClient.featureFlagByKey('feature1')).rejects.toMatchObject({
+    await expect(numeratorClient.featureFlagConfigByKey('feature1')).rejects.toMatchObject({
       message: 'Feature Flag not found',
       errorCode: 'FEATURE_FLAG_NOT_FOUND',
       errorStatus: 404,

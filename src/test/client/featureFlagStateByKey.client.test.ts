@@ -1,5 +1,5 @@
 import { NumeratorClient } from '../../main';
-import { FeatureFlagState, FlagStatusEnum, FlagValueTypeEnum } from '../../main/client/type.client';
+import { FeatureFlagValue, FlagStatusEnum, FlagValueTypeEnum } from '../../main/client/type.client';
 
 // Mock ApiClient
 jest.mock('../../main/client/api.client');
@@ -19,10 +19,10 @@ describe('NumeratorClient', () => {
     jest.clearAllMocks();
   });
 
-  describe('featureFlagStateByKey', () => {
-    it('should fetch featureFlagStateByKey successfully', async () => {
+  describe('featureFlagValueByKey', () => {
+    it('should fetch featureFlagValueByKey successfully', async () => {
       // Mock ApiClient's request method to resolve with mock data
-      const data: FeatureFlagState<boolean> = {
+      const data: FeatureFlagValue<boolean> = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
         value: true,
@@ -34,7 +34,7 @@ describe('NumeratorClient', () => {
       });
 
       const numeratorClient = new NumeratorClient(mockConfig);
-      const result = await numeratorClient.featureFlagStateByKey({
+      const result = await numeratorClient.featureFlagValueByKey({
         key: 'feature1',
         context: {
           userId: 'user123',
@@ -44,9 +44,9 @@ describe('NumeratorClient', () => {
       expect(result).toEqual(data);
     });
 
-    it('should handle error while fetching featureFlagStateByKey', async () => {
+    it('should handle error while fetching featureFlagValueByKey', async () => {
       // Mock ApiClient's request method to reject with an error
-      const error = { message: 'Error fetching featureFlagStateByKey', errorCode: 'fetch_error', errorStatus: 500 };
+      const error = { message: 'Error fetching featureFlagValueByKey', errorCode: 'fetch_error', errorStatus: 500 };
       (ApiClient.prototype.request as jest.Mock).mockResolvedValueOnce({
         data: undefined,
         error,
@@ -56,7 +56,7 @@ describe('NumeratorClient', () => {
 
       // Assert that the error is thrown
       await expect(
-        numeratorClient.featureFlagStateByKey({
+        numeratorClient.featureFlagValueByKey({
           key: 'feature1',
           context: {
             userId: 'user123',
@@ -76,7 +76,7 @@ describe('NumeratorClient', () => {
 
       // Assert that the "Feature Flag not found" error is thrown
       await expect(
-        numeratorClient.featureFlagStateByKey({
+        numeratorClient.featureFlagValueByKey({
           key: 'feature1',
           context: {
             userId: 'user123',

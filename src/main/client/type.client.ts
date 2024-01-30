@@ -40,24 +40,19 @@ export interface PaginationResponse<T> {
   data: T[];
 }
 
-export interface FeatureFlagsRequest extends PaginationRequest {
+export interface FeatureFlagConfigListingRequest extends PaginationRequest {
   page?: number;
   size?: number;
 }
 
-export interface FeatureFlagStateByIdRequest {
-  id: string;
-  context?: Record<string, any>;
-}
-
-export interface FeatureFlagStateByKeyRequest {
+export interface FeatureFlagValueByKeyRequest {
   key: string;
   context?: Record<string, any>;
 }
 
-export interface FeatureFlagsResponse extends PaginationResponse<FeatureFlag> {
+export interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFlagConfig> {
   count: number;
-  data: FeatureFlag[];
+  data: FeatureFlagConfig[];
 }
 
 // --- Types for Feature Flag --- //
@@ -71,7 +66,7 @@ export enum FlagValueTypeEnum {
   STRING,
 }
 
-export interface FeatureFlag {
+export interface FeatureFlagConfig {
   id: string;
   name: string;
   key: string;
@@ -85,7 +80,7 @@ export interface FeatureFlag {
   createdAt: Date;
 }
 
-export interface FeatureFlagState<T> {
+export interface FeatureFlagValue<T> {
   key: string;
   status: FlagStatusEnum;
   value: T;

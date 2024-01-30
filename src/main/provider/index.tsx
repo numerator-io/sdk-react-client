@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import NumeratorClient from '../client';
-import { FeatureFlag, FeatureFlagState } from '../client/type.client';
 import { NumeratorContext } from './context.provider';
-import { NumeratorContextType } from './type.provider';
+import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { mapArrayToRecord } from '../util/utils';
+import { FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
 
 // Check if the API key is defined
 if (process.env.REACT_APP_NUMERATOR_API_KEY === undefined) {
@@ -17,64 +17,48 @@ const numeratorClient = new NumeratorClient({
 });
 
 // Create a provider component
-export const NumeratorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlag>>({});
-  const [featureFlagsState, setFeatureFlagsState] = useState<Record<string, FeatureFlagState<any>>>({});
+export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, loadConfigListingOnMount }) => {
+  const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlagConfig>>({});
+  const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue<any>>>({});
 
-  const fetchFeatureFlagsConfig = async () => {
-    const allFlagsConfigRes = await numeratorClient.featureFlags();
-    setFeatureFlagsConfig(mapArrayToRecord(allFlagsConfigRes.data));
+  const fetchAllFeatureFlagsConfig = async () => {
+    const allFlagsConfig = await numeratorClient.allFeatureFlagsConfig();
+    setFeatureFlagsConfig(mapArrayToRecord(allFlagsConfig));
   };
 
-  const fetchFeatureFlagsConfigBy = async ({ key, id }: { key?: string; id?: string }) => {
-    if (key === undefined && id === undefined) {
-      throw new Error('Either key or id must be provided');
-    }
-
-    let featureFlagConfigRes;
-    if (id !== undefined) {
-      featureFlagConfigRes = await numeratorClient.featureFlagById(id);
-    } else {
-      featureFlagConfigRes = await numeratorClient.featureFlagByKey(key!!);
-    }
+  const fetchFeatureFlagConfig = async ({ key }: { key: string }) => {
+    const featureFlagConfig = await numeratorClient.featureFlagConfigByKey(key);
 
     // Update the state directly with the new Record containing a single FeatureFlag
     setFeatureFlagsConfig({
       ...featureFlagsConfig,
-      [featureFlagConfigRes.key]: featureFlagConfigRes,
+      [featureFlagConfig.key]: featureFlagConfig,
     });
   };
 
-  const fetchFeatureFlagState = async ({ context, key, id }: { context?: Record<string, any>; key?: string; id?: string }) => {
-    if (key === undefined && id === undefined) {
-      throw new Error('Either key or id must be provided');
-    }
-
-    let featureFlagStateRes;
-    if (id !== undefined) {
-      featureFlagStateRes = await numeratorClient.featureFlagStateById({ id, context });
-    } else {
-      featureFlagStateRes = await numeratorClient.featureFlagStateByKey({ key: key!!, context });
-    }
+  const fetchFeatureFlagValue = async ({ key, context }: { key: string; context?: Record<string, any> }) => {
+    const featureFlagValue = await numeratorClient.featureFlagValueByKey({ key: key, context });
 
     // Update the state directly with the new Record containing a single FeatureFlagState
     setFeatureFlagsState({
-      ...featureFlagsState,
-      [featureFlagStateRes.key]: featureFlagStateRes,
+      ...featureFlagsValue,
+      [featureFlagValue.key]: featureFlagValue,
     });
   };
 
   useEffect(() => {
-    fetchFeatureFlagsConfig();
+    if (loadConfigListingOnMount) {
+      fetchAllFeatureFlagsConfig();
+    }
   }, []);
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
     featureFlagsConfig,
-    featureFlagsState,
-    fetchFeatureFlagsConfig,
-    fetchFeatureFlagsConfigBy,
-    fetchFeatureFlagState,
+    featureFlagsValue,
+    fetchAllFeatureFlagsConfig,
+    fetchFeatureFlagConfig,
+    fetchFeatureFlagValue,
   };
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;

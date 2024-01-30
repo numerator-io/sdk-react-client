@@ -3,7 +3,7 @@ import {
   NumeratorClient,
   NumeratorProvider,
   useNumeratorContext,
-  FeatureFlag,
+  FeatureFlagConfig,
   FlagStatusEnum,
   FlagValueTypeEnum,
   ConfigClient,
@@ -22,9 +22,9 @@ describe('NumeratorProvider', () => {
     jest.resetAllMocks();
   });
 
-  it('fetches featureFlagsConfig on mount', async () => {
+  it('fetches fetchAllFeatureFlagsConfig on mount', async () => {
     // Mock featureFlags response from NumeratorClient
-    const mockFeatureFlags: FeatureFlag[] = [
+    const mockFeatureFlags: FeatureFlagConfig[] = [
       {
         id: '1',
         name: 'Feature 1',
@@ -51,18 +51,18 @@ describe('NumeratorProvider', () => {
       },
     ];
 
-    (NumeratorClient.prototype.featureFlags as jest.Mock).mockResolvedValueOnce({ data: mockFeatureFlags });
+    (NumeratorClient.prototype.allFeatureFlagsConfig as jest.Mock).mockResolvedValueOnce(mockFeatureFlags);
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { featureFlagsConfig, fetchFeatureFlagsConfig } = useNumeratorContext();
+      const { featureFlagsConfig } = useNumeratorContext();
 
       return (
         <div>
           <h1>Feature Flags:</h1>
           <ul>
             {Object.values(featureFlagsConfig).map((flag) => (
-              <li data-testid={flag.key}>{flag.name}</li>
+              <li key={flag.key} data-testid={flag.key}>{flag.name}</li>
             ))}
           </ul>
         </div>
@@ -70,14 +70,14 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider>
+      <NumeratorProvider loadConfigListingOnMount={true}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.featureFlags).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.allFeatureFlagsConfig).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId('feature1')).toBeDefined();
       expect(screen.getByTestId('feature2')).toBeDefined();
     });

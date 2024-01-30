@@ -1,14 +1,10 @@
-// Get all feature flags associated with the project
-export const END_POINT_FEATURE_FLAGS = 'api/sdk/feature-flags';
+const END_POINT_BASE = 'api/sdk/features-flags';
 
-// Get the details of a feature flag by key
-export const END_POINT_FEATURE_FLAG_DETAIL_BY_KEY = `${END_POINT_FEATURE_FLAGS}/by-key`;
+// Get all feature flags config associated with the project
+export const END_POINT_FEATURE_FLAG_CONFIG_LISTING = `${END_POINT_BASE}/listing`;
 
-// Get the details of a feature flag by id
-export const END_POINT_FEATURE_FLAG_DETAIL_BY_ID = `${END_POINT_FEATURE_FLAGS}/by-id`;
+// Get the config of a feature flag by key
+export const END_POINT_FEATURE_FLAG_CONFIG_BY_KEY = `${END_POINT_BASE}/detail-by-key`;
 
-// Get the state of the feature flag by key
-export const END_POINT_FEATURE_FLAG_STATE_BY_KEY = `${END_POINT_FEATURE_FLAGS}/state-by-key`;
-
-// Get the state of the feature flag by id
-export const END_POINT_FEATURE_FLAG_STATE_BY_ID = `${END_POINT_FEATURE_FLAGS}/state-by-id`;
+// Get the value of the feature flag by key
+export const END_POINT_FEATURE_FLAG_VALUE_BY_KEY = `${END_POINT_BASE}/by-key`;
