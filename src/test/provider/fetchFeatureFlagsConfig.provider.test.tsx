@@ -77,7 +77,7 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider>
+      <NumeratorProvider configClient={mockConfig}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );

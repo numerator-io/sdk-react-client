@@ -4,23 +4,16 @@ import NumeratorClient from '../client';
 import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { mapArrayToRecord } from '../util/utils';
-import { FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
 
-const initializeNumeratorClientFromEnvironment = () => {
-  // Check if the API key is defined
-  if (process.env.REACT_APP_NUMERATOR_API_KEY === undefined) {
-    throw new Error('REACT_APP_NUMERATOR_API_KEY is undefined');
-  }
-
+const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
-    apiKey: process.env.REACT_APP_NUMERATOR_API_KEY,
-    baseUrl: process.env.REACT_APP_NUMERATOR_BASE_URL || 'https://service-platform.dev.numerator.io',
+    apiKey: configClient.apiKey,
+    baseUrl: configClient.baseUrl || 'https://service-platform.dev.numerator.io',
   });
 
   return numeratorClient;
 };
-
-var numeratorClient: NumeratorClient;
 
 // Create a provider component
 export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
@@ -29,11 +22,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   configClient,
 }) => {
   // Initialize the SDK client
-  if (configClient) {
-    numeratorClient = new NumeratorClient(configClient);
-  } else {
-    numeratorClient = initializeNumeratorClientFromEnvironment();
-  }
+  const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
 
   const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlagConfig>>({});
   const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue<any>>>({});

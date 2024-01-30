@@ -12,5 +12,5 @@ export interface NumeratorContextType {
 export interface NumeratorProviderProps {
   children: ReactNode;
   loadAllFlagsConfigOnMount?: boolean;
-  configClient?: ConfigClient;
+  configClient: ConfigClient;
 }

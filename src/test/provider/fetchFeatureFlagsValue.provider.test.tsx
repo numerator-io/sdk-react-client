@@ -48,7 +48,9 @@ describe('NumeratorProvider', () => {
           <h1>Feature Flags Value:</h1>
           <ul>
             {Object.values(featureFlagsValue).map((flag) => (
-              <li key={flag.key} data-testid={flag.key}>{flag.key}</li>
+              <li key={flag.key} data-testid={flag.key}>
+                {flag.key}
+              </li>
             ))}
           </ul>
         </div>
@@ -56,7 +58,7 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider>
+      <NumeratorProvider configClient={mockConfig}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );

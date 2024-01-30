@@ -70,7 +70,7 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider loadAllFlagsConfigOnMount={true}>
+      <NumeratorProvider loadAllFlagsConfigOnMount={true} configClient={mockConfig}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );
