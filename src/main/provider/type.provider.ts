@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
+import { FeatureFlagConfig, FeatureFlagValue, ConfigClient } from '../client/type.client';
 
 export interface NumeratorContextType {
   featureFlagsConfig: Record<string, FeatureFlagConfig>;
@@ -11,5 +11,6 @@ export interface NumeratorContextType {
 
 export interface NumeratorProviderProps {
   children: ReactNode;
-  loadConfigListingOnMount?: boolean;
+  loadAllFlagsConfigOnMount?: boolean;
+  configClient?: ConfigClient;
 }

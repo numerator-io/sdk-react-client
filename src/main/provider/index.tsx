@@ -6,18 +6,35 @@ import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { mapArrayToRecord } from '../util/utils';
 import { FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
 
-// Check if the API key is defined
-if (process.env.REACT_APP_NUMERATOR_API_KEY === undefined) {
-  throw new Error('REACT_APP_NUMERATOR_API_KEY is undefined');
-}
+const initializeNumeratorClientFromEnvironment = () => {
+  // Check if the API key is defined
+  if (process.env.REACT_APP_NUMERATOR_API_KEY === undefined) {
+    throw new Error('REACT_APP_NUMERATOR_API_KEY is undefined');
+  }
 
-const numeratorClient = new NumeratorClient({
-  apiKey: process.env.REACT_APP_NUMERATOR_API_KEY,
-  baseUrl: process.env.REACT_APP_NUMERATOR_BASE_URL || 'https://service-platform.dev.numerator.io',
-});
+  const numeratorClient: NumeratorClient = new NumeratorClient({
+    apiKey: process.env.REACT_APP_NUMERATOR_API_KEY,
+    baseUrl: process.env.REACT_APP_NUMERATOR_BASE_URL || 'https://service-platform.dev.numerator.io',
+  });
+
+  return numeratorClient;
+};
+
+var numeratorClient: NumeratorClient;
 
 // Create a provider component
-export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, loadConfigListingOnMount }) => {
+export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
+  children,
+  loadAllFlagsConfigOnMount,
+  configClient,
+}) => {
+  // Initialize the SDK client
+  if (configClient) {
+    numeratorClient = new NumeratorClient(configClient);
+  } else {
+    numeratorClient = initializeNumeratorClientFromEnvironment();
+  }
+
   const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlagConfig>>({});
   const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue<any>>>({});
 
@@ -47,7 +64,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   };
 
   useEffect(() => {
-    if (loadConfigListingOnMount) {
+    if (loadAllFlagsConfigOnMount) {
       fetchAllFeatureFlagsConfig();
     }
   }, []);

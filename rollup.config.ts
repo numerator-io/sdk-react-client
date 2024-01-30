@@ -49,6 +49,19 @@ export default [
   },
   {
     input: 'index.ts',
+    output: [
+      {
+        file: 'lib/index.js',
+        format: 'umd',
+        sourcemap: true,
+        name: 'Numerator',
+      },
+    ],
+    plugins,
+    external,
+  },
+  {
+    input: 'index.ts',
     plugins: [dts(), json()],
     output: {
       file: 'lib/index.d.ts',
