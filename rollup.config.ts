@@ -1,33 +1,32 @@
 import dts from 'rollup-plugin-dts';
-import esbuild from 'rollup-plugin-esbuild';
-import filesize from 'rollup-plugin-filesize';
 import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 const plugins = [typescript()];
 const external = /node_modules/;
 
 export default [
+  // Browser UMD bundle for CDN
   {
     input: 'src/main/index.tsx',
     output: [
       {
-        file: 'lib/umd/index.js',
+        file: 'lib/index.js',
         format: 'umd',
-        sourcemap: true,
         name: 'Numerator',
+        sourcemap: true,
       },
     ],
     plugins,
     external,
   },
+
+  // Browser CJS bundle
   {
     input: 'src/main/index.tsx',
     output: [
       {
-        file: 'lib/cjs/index.js',
+        file: 'lib/index.cjs.js',
         format: 'cjs',
         sourcemap: true,
       },
@@ -35,11 +34,13 @@ export default [
     plugins,
     external,
   },
+
+  // browser ESM bundle for CDN
   {
     input: 'src/main/index.tsx',
     output: [
       {
-        file: 'lib/esm/index.js',
+        file: 'lib/index.esm.js',
         format: 'esm',
         sourcemap: true,
       },
@@ -49,10 +50,11 @@ export default [
   },
   {
     input: 'src/main/index.tsx',
-    plugins: [dts(), json()],
     output: {
       file: 'lib/index.d.ts',
       format: 'es',
     },
+    plugins: [typescript(), dts(), json()],
+    external,
   },
 ];
