@@ -5,13 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
-    "lib/index.js",
-    "lib/index.d.ts",
-    "lib/index.d.ts.map",
-    "lib/index.cjs.js",
-    "lib/index.cjs.js.map",
-    "lib/index.esm.js",
-    "lib/index.esm.js.map"
+    "lib"
   ],
   "scripts": {
     "test": "jest",
