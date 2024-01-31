@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import NumeratorClient from '../client';
 import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
-import { mapArrayToRecord } from '../util/utils';
+import { mapArrayToRecord } from '../util';
 import { ConfigClient, FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
 
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
@@ -18,8 +18,9 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
 // Create a provider component
 export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   children,
-  loadAllFlagsConfigOnMount,
   configClient,
+  loadAllFlagsConfigOnMount,
+  loadFeatureFlagsValueOnMount,
 }) => {
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
@@ -33,30 +34,24 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   };
 
   const fetchFeatureFlagConfig = async ({ key }: { key: string }) => {
-    const featureFlagConfig = await numeratorClient.featureFlagConfigByKey(key);
+    const flagConfigRes = await numeratorClient.featureFlagConfigByKey(key);
 
     // Update the state directly with the new Record containing a single FeatureFlag
-    setFeatureFlagsConfig({
-      ...featureFlagsConfig,
-      [featureFlagConfig.key]: featureFlagConfig,
-    });
+    setFeatureFlagsConfig((prevFeatureFlagsConfig) => ({
+      ...prevFeatureFlagsConfig,
+      [flagConfigRes.key]: flagConfigRes,
+    }));
   };
 
   const fetchFeatureFlagValue = async ({ key, context }: { key: string; context?: Record<string, any> }) => {
-    const featureFlagValue = await numeratorClient.featureFlagValueByKey({ key: key, context });
+    const flagValueRes = await numeratorClient.featureFlagValueByKey({ key: key, context });
 
     // Update the state directly with the new Record containing a single FeatureFlagState
-    setFeatureFlagsState({
-      ...featureFlagsValue,
-      [featureFlagValue.key]: featureFlagValue,
-    });
+    setFeatureFlagsState((prevFeatureFlagsValue) => ({
+      ...prevFeatureFlagsValue,
+      [flagValueRes.key]: flagValueRes,
+    }));
   };
-
-  useEffect(() => {
-    if (loadAllFlagsConfigOnMount) {
-      fetchAllFeatureFlagsConfig();
-    }
-  }, []);
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
@@ -66,6 +61,18 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     fetchFeatureFlagConfig,
     fetchFeatureFlagValue,
   };
+
+  useEffect(() => {
+    if (loadAllFlagsConfigOnMount) {
+      fetchAllFeatureFlagsConfig();
+    }
+
+    if (loadFeatureFlagsValueOnMount && Object.keys(loadFeatureFlagsValueOnMount).length > 0) {
+      Object.keys(loadFeatureFlagsValueOnMount).forEach((key) => {
+        fetchFeatureFlagValue({ key, context: loadFeatureFlagsValueOnMount[key] });
+      });
+    }
+  }, []);
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
 };
