@@ -22,10 +22,12 @@ describe('NumeratorClient', () => {
   describe('featureFlagValueByKey', () => {
     it('should fetch featureFlagValueByKey successfully', async () => {
       // Mock ApiClient's request method to resolve with mock data
-      const data: FeatureFlagValue<boolean> = {
+      const data: FeatureFlagValue = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
-        value: true,
+        value: {
+          booleanValue: true,
+        },
         valueType: FlagValueTypeEnum.BOOLEAN,
       };
       (ApiClient.prototype.request as jest.Mock).mockResolvedValueOnce({

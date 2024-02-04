@@ -96,9 +96,9 @@ export class NumeratorClient {
     }
   }
 
-  async featureFlagValueByKey<T>(request: FeatureFlagValueByKeyRequest): Promise<FeatureFlagValue<T>> {
+  async featureFlagValueByKey(request: FeatureFlagValueByKeyRequest): Promise<FeatureFlagValue> {
     try {
-      const response = await this.apiClient.request<FeatureFlagValue<T>>({
+      const response = await this.apiClient.request<FeatureFlagValue>({
         method: 'POST',
         endpoint: END_POINT_FEATURE_FLAG_VALUE_BY_KEY,
         data: request,

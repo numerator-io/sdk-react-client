@@ -13,9 +13,19 @@ import {
 } from '../../main/util';
 
 describe('Feature Flag Utility Functions', () => {
-  const featureFlagsValue: Record<string, FeatureFlagValue<any>> = {
-    feature1: { key: 'feature1', status: FlagStatusEnum.ON, value: 'value1', valueType: FlagValueTypeEnum.STRING },
-    feature2: { key: 'feature2', status: FlagStatusEnum.OFF, value: 'value2', valueType: FlagValueTypeEnum.STRING },
+  const featureFlagsValue: Record<string, FeatureFlagValue> = {
+    feature1: {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'value1' },
+      valueType: FlagValueTypeEnum.STRING,
+    },
+    feature2: {
+      key: 'feature2',
+      status: FlagStatusEnum.OFF,
+      value: { stringValue: 'value2' },
+      valueType: FlagValueTypeEnum.STRING,
+    },
   };
 
   describe('flagIsOn', () => {

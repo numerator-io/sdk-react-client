@@ -42,6 +42,7 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     count: number;
     data: FeatureFlagConfig[];
 }
+type VariationKeyType = "stringValue" | "booleanValue";
 declare enum FlagStatusEnum {
     ON = "ON",
     OFF = "OFF"
@@ -63,11 +64,15 @@ interface FeatureFlagConfig {
     valueType: FlagValueTypeEnum;
     createdAt: Date;
 }
-interface FeatureFlagValue<T> {
+interface FeatureFlagValue {
     key: string;
     status: FlagStatusEnum;
-    value: T;
+    value: VariationValue;
     valueType: FlagValueTypeEnum;
+}
+interface VariationValue {
+    booleanValue?: Boolean;
+    stringValue?: String;
 }
 
 declare class NumeratorClient {
@@ -77,7 +82,7 @@ declare class NumeratorClient {
     featureFlagConfigListing(request?: FeatureFlagConfigListingRequest): Promise<FeatureFlagConfigListingResponse>;
     allFeatureFlagsConfig(): Promise<FeatureFlagConfig[]>;
     featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig>;
-    featureFlagValueByKey<T>(request: FeatureFlagValueByKeyRequest): Promise<FeatureFlagValue<T>>;
+    featureFlagValueByKey(request: FeatureFlagValueByKeyRequest): Promise<FeatureFlagValue>;
 }
 
 interface NumeratorContextType {
@@ -90,7 +95,7 @@ interface NumeratorContextType {
      * Record of feature flags values.
      * Keys are feature flag keys, values are the corresponding feature flag values.
      */
-    featureFlagsValue: Record<string, FeatureFlagValue<any>>;
+    featureFlagsValue: Record<string, FeatureFlagValue>;
     /**
      * Function to fetch configuration for all feature flags.
      * This function retrieves configuration data for all feature flags and updates the context.
@@ -177,14 +182,14 @@ declare const withTimeout: <T>(promise: Promise<T>, timeout: number) => Promise<
  * @param key - The key of the feature flag to check.
  * @returns True if the feature flag is ON, false otherwise.
  */
-declare const flagIsOn: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string) => boolean;
+declare const flagIsOn: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string) => boolean;
 /**
  * Check if a feature flag is OFF.
  * @param featureFlagsValue - The record of feature flags and their values.
  * @param key - The key of the feature flag to check.
  * @returns True if the feature flag is OFF, false otherwise.
  */
-declare const flagIsOff: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string) => boolean;
+declare const flagIsOff: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string) => boolean;
 /**
  * Check if a feature flag's value equals a specified value.
  * @param featureFlagsValue - The record of feature flags and their values.
@@ -192,7 +197,7 @@ declare const flagIsOff: (featureFlagsValue: Record<string, FeatureFlagValue<any
  * @param value - The value to compare with the feature flag's value.
  * @returns True if the feature flag's value equals the specified value, false otherwise.
  */
-declare const flagEqualsValue: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, value: any) => boolean;
+declare const flagEqualsValue: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, value: any) => boolean;
 /**
  * Check if a feature flag is ON and should render a React component.
  * @param featureFlagsValue - The record of feature flags and their values.
@@ -200,7 +205,7 @@ declare const flagEqualsValue: (featureFlagsValue: Record<string, FeatureFlagVal
  * @param onComponent - The React component to render if the feature flag is ON.
  * @returns The specified React component if the feature flag is ON, otherwise an empty element.
  */
-declare const flagIsOnShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, onComponent: React.ReactElement) => React.ReactElement;
+declare const flagIsOnShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, onComponent: React.ReactElement) => React.ReactElement;
 /**
  * Renders the specified React component if the feature flag with the given key is in the "OFF" state.
  * Otherwise, it renders an empty fragment. If the feature flag is undefined, it also renders an empty fragment.
@@ -209,7 +214,7 @@ declare const flagIsOnShouldRenderComponent: (featureFlagsValue: Record<string, 
  * @param offComponent - The React component to render when the feature flag is in the "OFF" state.
  * @returns The rendered React component or an empty fragment.
  */
-declare const flagIsOffShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, offComponent: React.ReactElement) => React.ReactElement;
+declare const flagIsOffShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, offComponent: React.ReactElement) => React.ReactElement;
 /**
  * Renders the specified React component if the value of the feature flag with the given key
  * matches the provided value. Otherwise, it renders an empty fragment.
@@ -220,7 +225,7 @@ declare const flagIsOffShouldRenderComponent: (featureFlagsValue: Record<string,
  * @param renderComponent - The React component to render when the feature flag value matches the provided value.
  * @returns The rendered React component or an empty fragment.
  */
-declare const flagEqualsValueShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, value: any, renderComponent: React.ReactElement) => React.ReactElement;
+declare const flagEqualsValueShouldRenderComponent: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, value: any, renderComponent: React.ReactElement) => React.ReactElement;
 /**
  * Executes the provided callback if the value of the feature flag with the given key is ON.
  * If the feature flag is undefined or its value is not ON, the callback is not executed.
@@ -228,7 +233,7 @@ declare const flagEqualsValueShouldRenderComponent: (featureFlagsValue: Record<s
  * @param key - The key of the feature flag to check.
  * @param onCallback - The callback function to execute when the feature flag value is ON.
  */
-declare const flagIsOnShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, onCallback: () => void) => void;
+declare const flagIsOnShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, onCallback: () => void) => void;
 /**
  * Executes the provided callback if the value of the feature flag with the given key is OFF.
  * If the feature flag is undefined or its value is not OFF, the callback is not executed.
@@ -236,7 +241,7 @@ declare const flagIsOnShouldCallback: (featureFlagsValue: Record<string, Feature
  * @param key - The key of the feature flag to check.
  * @param offCallback - The callback function to execute when the feature flag value is OFF.
  */
-declare const flagIsOffShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, offCallback: () => void) => void;
+declare const flagIsOffShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, offCallback: () => void) => void;
 /**
  * Executes the provided callback if the value of the feature flag with the given key equals the specified value.
  * If the feature flag is undefined or its value does not equal the specified value, the callback is not executed.
@@ -245,6 +250,6 @@ declare const flagIsOffShouldCallback: (featureFlagsValue: Record<string, Featur
  * @param value - The value to compare with the feature flag's value.
  * @param equalsCallback - The callback function to execute when the feature flag value equals the specified value.
  */
-declare const flagEqualsValueShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, value: any, equalsCallback: () => void) => void;
+declare const flagEqualsValueShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue>, key: string, value: any, equalsCallback: () => void) => void;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, useNumeratorContext, withTimeout };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, useNumeratorContext, withTimeout };

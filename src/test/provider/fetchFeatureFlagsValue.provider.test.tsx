@@ -26,10 +26,12 @@ describe('NumeratorProvider', () => {
 
   // Add this test within the same 'describe' block
   it('fetches featureFlagValue by key', async () => {
-    const mockFeatureFlagValue: FeatureFlagValue<boolean> = {
+    const mockFeatureFlagValue: FeatureFlagValue = {
       key: 'feature1',
       status: FlagStatusEnum.ON,
-      value: true,
+      value: {
+        booleanValue: true
+      },
       valueType: FlagValueTypeEnum.BOOLEAN,
     };
     (NumeratorClient.prototype.allFeatureFlagsConfig as jest.Mock).mockResolvedValueOnce([]);

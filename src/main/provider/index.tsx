@@ -26,7 +26,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
 
   const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlagConfig>>({});
-  const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue<any>>>({});
+  const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue>>({});
 
   const fetchAllFeatureFlagsConfig = async () => {
     const allFlagsConfig = await numeratorClient.allFeatureFlagsConfig();

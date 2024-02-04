@@ -12,7 +12,7 @@ export interface NumeratorContextType {
    * Record of feature flags values.
    * Keys are feature flag keys, values are the corresponding feature flag values.
    */
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>;
+  featureFlagsValue: Record<string, FeatureFlagValue>;
 
   /**
    * Function to fetch configuration for all feature flags.

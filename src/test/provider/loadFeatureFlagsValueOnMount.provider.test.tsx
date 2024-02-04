@@ -52,7 +52,7 @@ describe('NumeratorProvider', () => {
           <ul>
             {Object.values(featureFlagsValue).map((flag) => (
               <li key={flag.key} data-testid={flag.key}>
-                {flag.key}: {flag.status} - {flag.value}
+                {flag.key}: {flag.status} - {flag.value.toString()}
               </li>
             ))}
           </ul>
