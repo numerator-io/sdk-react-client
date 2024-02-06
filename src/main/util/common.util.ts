@@ -33,3 +33,23 @@ export const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T>
   );
   return Promise.race([promise, timeoutPromise]);
 };
+/**
+ * Convert snakecase object to camelcase object.
+ * @param obj - The original object.
+ * @returns A Promise that return camel object.
+ */
+export const snakeToCamel = (obj: any): any => {
+  if (obj === null || typeof obj !== 'object') {
+      return obj;
+  }
+
+  if (Array.isArray(obj)) {
+      return obj.map(snakeToCamel);
+  }
+
+  return Object.keys(obj).reduce((acc: any, key: string) => {
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      acc[camelKey] = snakeToCamel(obj[key]);
+      return acc;
+  }, {});
+}
