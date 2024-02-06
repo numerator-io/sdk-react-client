@@ -25,7 +25,7 @@ describe('NumeratorClient', () => {
       const data: FeatureFlagValue<VariationValue> = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
-        value: { long_value: 555 },
+        value: { longValue: 555 },
         valueType: FlagValueTypeEnum.LONG,
       };
 

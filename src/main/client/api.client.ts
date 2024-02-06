@@ -1,6 +1,6 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import applyCaseMiddleware from 'axios-case-converter';
+import { AxiosRequestConfig } from 'axios';
 import { ApiClientInterface, ApiRequestOptions, ApiResponse, ConfigClient, ErrorResponse } from './type.client';
+import axios from './axios.middleware';
 
 export class ApiClient implements ApiClientInterface {
   readonly apiKey: string;
@@ -25,15 +25,14 @@ export class ApiClient implements ApiClientInterface {
     };
 
     try {
-      const client = applyCaseMiddleware(axios.create());
-      const response = await client.request<T>(config);
+      const response = await axios.request<T>(config);
       return { data: response.data, error: undefined };
     } catch (error: Error | any) {
       const axiosResponse = error.response;
       if (axiosResponse) {
         const errorResponse: ErrorResponse = {
           message: axiosResponse.data?.message || 'Unknown Error',
-          errorCode: axiosResponse.data?.error_code || 'unknown_error',
+          errorCode: axiosResponse.data?.errorCode || 'unknown_error',
           errorStatus: axiosResponse.status,
         };
         return { data: undefined, error: errorResponse };
@@ -41,7 +40,7 @@ export class ApiClient implements ApiClientInterface {
         console.warn('AxiosError:', error.message);
         return {
           data: undefined,
-          error: { message: 'Unknown Error', error_code: 'unknown_error', http_status: 500 },
+          error: { message: 'Unknown Error', errorCode: 'unknown_error', httpStatus: 500 },
         };
       }
     }

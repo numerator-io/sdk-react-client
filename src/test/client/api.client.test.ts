@@ -1,9 +1,10 @@
-import axios, { AxiosRequestHeaders, AxiosResponse } from 'axios';
+import { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { ApiRequestOptions, ConfigClient } from '../../main/client/type.client';
 import ApiClient from '../../main/client/api.client';
+import axios from '../../main/client/axios.middleware';
 
 // Mocking axios
-jest.mock('axios');
+jest.mock('../../main/client/axios.middleware');
 
 describe('ApiClient', () => {
   const mockConfig: ConfigClient = {
@@ -53,7 +54,7 @@ describe('ApiClient', () => {
       message: 'Request failed with status code 404',
       response: {
         status: 404,
-        data: { message: 'Not Found', error_code: 'not_found' },
+        data: { message: 'Not Found', errorCode: 'not_found' },
       },
     };
 

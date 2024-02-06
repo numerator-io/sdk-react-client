@@ -42,7 +42,7 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     count: number;
     data: FeatureFlagConfig[];
 }
-type VariationKeyType = 'string_value' | 'boolean_value' | 'long_value' | 'double_value';
+type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';
 declare enum FlagStatusEnum {
     ON = "ON",
     OFF = "OFF"
@@ -73,10 +73,10 @@ interface FeatureFlagValue<T> {
     valueType: FlagValueTypeEnum;
 }
 interface VariationValue {
-    string_value?: string;
-    boolean_value?: boolean;
-    long_value?: number;
-    double_value?: number;
+    stringValue?: string;
+    booleanValue?: boolean;
+    longValue?: number;
+    doubleValue?: number;
 }
 
 declare class NumeratorClient {

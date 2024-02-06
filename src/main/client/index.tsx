@@ -118,16 +118,16 @@ export class NumeratorClient {
       let typeKey: VariationKeyType;
       switch (response.data?.valueType) {
         case FlagValueTypeEnum.STRING:
-          typeKey = 'string_value';
+          typeKey = 'stringValue';
           break;
         case FlagValueTypeEnum.LONG:
-          typeKey = 'long_value';
+          typeKey = 'longValue';
           break;
         case FlagValueTypeEnum.DOUBLE:
-          typeKey = 'double_value';
+          typeKey = 'doubleValue';
           break;
         case FlagValueTypeEnum.BOOLEAN:
-          typeKey = 'boolean_value';
+          typeKey = 'booleanValue';
           break;
         default:
           throw new Error('cannot cast type data');
