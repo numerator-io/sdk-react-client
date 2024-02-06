@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import applyCaseMiddleware from 'axios-case-converter';
 import { ApiClientInterface, ApiRequestOptions, ApiResponse, ConfigClient, ErrorResponse } from './type.client';
 
 export class ApiClient implements ApiClientInterface {
@@ -24,7 +25,8 @@ export class ApiClient implements ApiClientInterface {
     };
 
     try {
-      const response = await axios.request<T>(config);
+      const client = applyCaseMiddleware(axios.create());
+      const response = await client.request<T>(config);
       return { data: response.data, error: undefined };
     } catch (error: Error | any) {
       const axiosResponse = error.response;
