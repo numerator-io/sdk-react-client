@@ -42,13 +42,16 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     count: number;
     data: FeatureFlagConfig[];
 }
+type VariationKeyType = 'string_value' | 'boolean_value' | 'long_value' | 'double_value';
 declare enum FlagStatusEnum {
     ON = "ON",
     OFF = "OFF"
 }
 declare enum FlagValueTypeEnum {
     BOOLEAN = "BOOLEAN",
-    STRING = "STRING"
+    STRING = "STRING",
+    LONG = "LONG",
+    DOUBLE = "DOUBLE"
 }
 interface FeatureFlagConfig {
     id: string;
@@ -68,6 +71,12 @@ interface FeatureFlagValue<T> {
     status: FlagStatusEnum;
     value: T;
     valueType: FlagValueTypeEnum;
+}
+interface VariationValue {
+    string_value?: string;
+    boolean_value?: boolean;
+    long_value?: number;
+    double_value?: number;
 }
 
 declare class NumeratorClient {
@@ -247,4 +256,4 @@ declare const flagIsOffShouldCallback: (featureFlagsValue: Record<string, Featur
  */
 declare const flagEqualsValueShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, value: any, equalsCallback: () => void) => void;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, useNumeratorContext, withTimeout };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, useNumeratorContext, withTimeout };

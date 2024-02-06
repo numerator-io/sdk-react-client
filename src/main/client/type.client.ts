@@ -56,6 +56,8 @@ export interface FeatureFlagConfigListingResponse extends PaginationResponse<Fea
 }
 
 // --- Types for Feature Flag --- //
+export type VariationKeyType = 'string_value' | 'boolean_value' | 'long_value' | 'double_value';
+
 export enum FlagStatusEnum {
   ON = 'ON',
   OFF = 'OFF',
@@ -64,6 +66,8 @@ export enum FlagStatusEnum {
 export enum FlagValueTypeEnum {
   BOOLEAN = 'BOOLEAN',
   STRING = 'STRING',
+  LONG = 'LONG',
+  DOUBLE = 'DOUBLE',
 }
 
 export interface FeatureFlagConfig {
@@ -85,4 +89,11 @@ export interface FeatureFlagValue<T> {
   status: FlagStatusEnum;
   value: T;
   valueType: FlagValueTypeEnum;
+}
+
+export interface VariationValue {
+  string_value?: string;
+  boolean_value?: boolean;
+  long_value?: number;
+  double_value?: number;
 }
