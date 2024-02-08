@@ -42,13 +42,16 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     count: number;
     data: FeatureFlagConfig[];
 }
+type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';
 declare enum FlagStatusEnum {
     ON = "ON",
     OFF = "OFF"
 }
 declare enum FlagValueTypeEnum {
     BOOLEAN = "BOOLEAN",
-    STRING = "STRING"
+    STRING = "STRING",
+    LONG = "LONG",
+    DOUBLE = "DOUBLE"
 }
 interface FeatureFlagConfig {
     id: string;
@@ -68,6 +71,12 @@ interface FeatureFlagValue<T> {
     status: FlagStatusEnum;
     value: T;
     valueType: FlagValueTypeEnum;
+}
+interface VariationValue {
+    stringValue?: string;
+    booleanValue?: boolean;
+    longValue?: number;
+    doubleValue?: number;
 }
 
 declare class NumeratorClient {
@@ -170,6 +179,12 @@ declare const mapArrayToRecord: <T extends {
  * @returns A Promise that resolves when the original promise resolves or rejects with a timeout error.
  */
 declare const withTimeout: <T>(promise: Promise<T>, timeout: number) => Promise<T>;
+/**
+ * Convert snakecase object to camelcase object.
+ * @param obj - The original object.
+ * @returns A Promise that return camel object.
+ */
+declare const snakeToCamel: (obj: any) => any;
 
 /**
  * Check if a feature flag is ON.
@@ -247,4 +262,4 @@ declare const flagIsOffShouldCallback: (featureFlagsValue: Record<string, Featur
  */
 declare const flagEqualsValueShouldCallback: (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, value: any, equalsCallback: () => void) => void;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, useNumeratorContext, withTimeout };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValue, type FeatureFlagValueByKeyRequest, FlagStatusEnum, FlagValueTypeEnum, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, deepCopy, flagEqualsValue, flagEqualsValueShouldCallback, flagEqualsValueShouldRenderComponent, flagIsOff, flagIsOffShouldCallback, flagIsOffShouldRenderComponent, flagIsOn, flagIsOnShouldCallback, flagIsOnShouldRenderComponent, mapArrayToRecord, sleep, snakeToCamel, useNumeratorContext, withTimeout };

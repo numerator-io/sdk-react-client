@@ -1,5 +1,5 @@
 import { NumeratorClient } from '../../main';
-import { FeatureFlagValue, FlagStatusEnum, FlagValueTypeEnum } from '../../main/client/type.client';
+import { FeatureFlagValue, FlagStatusEnum, FlagValueTypeEnum, VariationValue } from '../../main/client/type.client';
 
 // Mock ApiClient
 jest.mock('../../main/client/api.client');
@@ -22,12 +22,20 @@ describe('NumeratorClient', () => {
   describe('featureFlagValueByKey', () => {
     it('should fetch featureFlagValueByKey successfully', async () => {
       // Mock ApiClient's request method to resolve with mock data
-      const data: FeatureFlagValue<boolean> = {
+      const data: FeatureFlagValue<VariationValue> = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
-        value: true,
-        valueType: FlagValueTypeEnum.BOOLEAN,
+        value: { long_value: 555 },
+        valueType: FlagValueTypeEnum.LONG,
       };
+
+      const response: FeatureFlagValue<number> = {
+        key: 'feature1',
+        status: FlagStatusEnum.ON,
+        value: 555,
+        valueType: FlagValueTypeEnum.LONG,
+      };
+
       (ApiClient.prototype.request as jest.Mock).mockResolvedValueOnce({
         data,
         error: undefined,
@@ -41,7 +49,7 @@ describe('NumeratorClient', () => {
         },
       });
 
-      expect(result).toEqual(data);
+      expect(result).toEqual(response);
     });
 
     it('should handle error while fetching featureFlagValueByKey', async () => {

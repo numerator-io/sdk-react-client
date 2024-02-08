@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { ApiClientInterface, ApiRequestOptions, ApiResponse, ConfigClient, ErrorResponse } from './type.client';
+import { snakeToCamel } from '../util';
 
 export class ApiClient implements ApiClientInterface {
   readonly apiKey: string;
@@ -25,7 +26,7 @@ export class ApiClient implements ApiClientInterface {
 
     try {
       const response = await axios.request<T>(config);
-      return { data: response.data, error: undefined };
+      return { data: snakeToCamel(response.data), error: undefined };
     } catch (error: Error | any) {
       const axiosResponse = error.response;
       if (axiosResponse) {

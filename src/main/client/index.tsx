@@ -12,6 +12,9 @@ import {
   FeatureFlagConfigListingResponse,
   FeatureFlagValue,
   FeatureFlagValueByKeyRequest,
+  FlagValueTypeEnum,
+  VariationKeyType,
+  VariationValue,
 } from './type.client';
 
 export class NumeratorClient {
@@ -103,7 +106,6 @@ export class NumeratorClient {
         endpoint: END_POINT_FEATURE_FLAG_VALUE_BY_KEY,
         data: request,
       });
-
       if (response.error) {
         console.warn('Error fetching featureFlagValueByKey due to: [', response.error, ']');
         return Promise.reject(response.error as ErrorResponse);
@@ -113,7 +115,32 @@ export class NumeratorClient {
         return this.handleFeatureFlagNotFound();
       }
 
-      return response.data;
+      let typeKey: VariationKeyType;
+      switch (response.data?.valueType) {
+        case FlagValueTypeEnum.STRING:
+          typeKey = 'stringValue';
+          break;
+        case FlagValueTypeEnum.LONG:
+          typeKey = 'longValue';
+          break;
+        case FlagValueTypeEnum.DOUBLE:
+          typeKey = 'doubleValue';
+          break;
+        case FlagValueTypeEnum.BOOLEAN:
+          typeKey = 'booleanValue';
+          break;
+        default:
+          throw new Error('cannot cast type data');
+      }
+
+      const newValue = (response.data?.value as VariationValue)[typeKey] as T;
+
+      if (!newValue) {
+        throw new Error('Cannot cast data');
+      }
+
+      const newResponse = { ...response.data, value: newValue };
+      return newResponse;
     } catch (error: any) {
       console.warn('Error fetching featureFlagValueByKey due to: [', error, ']');
       return Promise.reject(error);
