@@ -1,0 +1,49 @@
+name: React build and test request Workflow
+
+on:
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - 'manifest.json'
+      - '.github/**/*'
+      - '.gitignore'
+      - '.editorconfig'
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+
+    - name: Install dependencies
+      uses: yarn
+
+    - name: Run build
+      uses: yarn build
+
+    - name: Run test
+      uses: yarn test
+
+    - name: Run lint
+      uses: yarn lint && yarn typecheck
+
+
+
+
+    
+
+
+
+
+
+
