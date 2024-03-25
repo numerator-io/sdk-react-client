@@ -1,0 +1,41 @@
+name: React build and test request Workflow
+
+on:
+  pull_request:
+    paths:
+     - src/*
+     - yarn.lock
+
+concurrency:
+  # github.workflow: name of the workflow
+  # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}      
+  cancel-in-progress: true
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+
+    - name: Install dependencies
+      run: CI=true yarn install
+
+    - name: Run lint
+      run: yarn lint && yarn check      
+
+    - name: Run test
+      run: yarn test
+
+    - name: Run build
+      run: yarn build
