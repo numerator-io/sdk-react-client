@@ -37,7 +37,7 @@ describe('NumeratorProvider', () => {
       },
     };
 
-    (NumeratorClient.prototype.featureFlagValueByKey as jest.Mock).mockImplementation(async ({ key }) => {
+    (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockImplementation(async ({ key }) => {
       if (key === 'featureFlagKey1') {
         return mockFeatureFlagValues.featureFlagKey1;
       }
@@ -67,7 +67,7 @@ describe('NumeratorProvider', () => {
     );
 
     await waitFor(() => {
-      expect(NumeratorClient.prototype.featureFlagValueByKey).toHaveBeenCalledTimes(2);
+      expect(NumeratorClient.prototype.getFeatureFlagByKey).toHaveBeenCalledTimes(2);
       expect(screen.getByTestId('featureFlagKey1')).toBeDefined();
       expect(screen.getByTestId('featureFlagKey2')).toBeDefined();
     });

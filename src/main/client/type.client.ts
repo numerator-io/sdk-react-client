@@ -84,10 +84,10 @@ export interface FeatureFlagConfig {
   createdAt: Date;
 }
 
-export interface FeatureFlagValue<T> {
+export interface FlagVariationValue {
   key: string;
   status: FlagStatusEnum;
-  value: T;
+  value: VariationValue;
   valueType: FlagValueTypeEnum;
 }
 
@@ -96,4 +96,10 @@ export interface VariationValue {
   booleanValue?: boolean;
   longValue?: number;
   doubleValue?: number;
+}
+
+export interface FlagEvaluationDetail<T> {
+  key: string,
+  value: T,
+  reason: Map<string, any> | null
 }

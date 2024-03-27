@@ -7,7 +7,7 @@ import {
   FlagStatusEnum,
   FlagValueTypeEnum,
   ConfigClient,
-  FeatureFlagValue,
+  FlagVariationValue,
 } from '../../main';
 import { useEffect } from 'react';
 
@@ -26,14 +26,14 @@ describe('NumeratorProvider', () => {
 
   // Add this test within the same 'describe' block
   it('fetches featureFlagValue by key', async () => {
-    const mockFeatureFlagValue: FeatureFlagValue<boolean> = {
+    const mockFeatureFlagValue: FlagVariationValue = {
       key: 'feature1',
       status: FlagStatusEnum.ON,
-      value: true,
+      value: { booleanValue: true },
       valueType: FlagValueTypeEnum.BOOLEAN,
     };
     (NumeratorClient.prototype.allFeatureFlagsConfig as jest.Mock).mockResolvedValueOnce([]);
-    (NumeratorClient.prototype.featureFlagValueByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
+    (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
@@ -65,7 +65,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.featureFlagValueByKey).toHaveBeenCalledWith({
+      expect(NumeratorClient.prototype.getFeatureFlagByKey).toHaveBeenCalledWith({
         context: { userId: 123 },
         key: 'feature1',
       });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FeatureFlagValue, FlagStatusEnum } from '../client/type.client';
+import { FlagVariationValue, FlagStatusEnum } from '../client/type.client';
 
 /**
  * Check if a feature flag is ON.
@@ -7,7 +7,7 @@ import { FeatureFlagValue, FlagStatusEnum } from '../client/type.client';
  * @param key - The key of the feature flag to check.
  * @returns True if the feature flag is ON, false otherwise.
  */
-export const flagIsOn = (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string): boolean => {
+export const flagIsOn = (featureFlagsValue: Record<string, FlagVariationValue>, key: string): boolean => {
   return featureFlagsValue[key]?.status === FlagStatusEnum.ON;
 };
 
@@ -17,7 +17,7 @@ export const flagIsOn = (featureFlagsValue: Record<string, FeatureFlagValue<any>
  * @param key - The key of the feature flag to check.
  * @returns True if the feature flag is OFF, false otherwise.
  */
-export const flagIsOff = (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string): boolean => {
+export const flagIsOff = (featureFlagsValue: Record<string, FlagVariationValue>, key: string): boolean => {
   const flag = featureFlagsValue[key];
   return !flag || flag?.status === FlagStatusEnum.OFF;
 };
@@ -30,7 +30,7 @@ export const flagIsOff = (featureFlagsValue: Record<string, FeatureFlagValue<any
  * @returns True if the feature flag's value equals the specified value, false otherwise.
  */
 export const flagEqualsValue = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   value: any,
 ): boolean => {
@@ -44,7 +44,7 @@ export const flagEqualsValue = (
  * @param onComponent - The React component to render if the feature flag is ON.
  * @returns The specified React component if the feature flag is ON, otherwise an empty element.
  */
-export const flagIsOnShouldRenderComponent = (featureFlagsValue: Record<string, FeatureFlagValue<any>>, key: string, onComponent: React.ReactElement): React.ReactElement => {
+export const flagIsOnShouldRenderComponent = (featureFlagsValue: Record<string, FlagVariationValue>, key: string, onComponent: React.ReactElement): React.ReactElement => {
   return featureFlagsValue[key]?.status === FlagStatusEnum.ON ? onComponent : React.createElement(React.Fragment);;
 }
 
@@ -57,7 +57,7 @@ export const flagIsOnShouldRenderComponent = (featureFlagsValue: Record<string, 
  * @returns The rendered React component or an empty fragment.
  */
 export const flagIsOffShouldRenderComponent = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   offComponent: React.ReactElement
 ): React.ReactElement => {
@@ -83,7 +83,7 @@ export const flagIsOffShouldRenderComponent = (
  * @returns The rendered React component or an empty fragment.
  */
 export const flagEqualsValueShouldRenderComponent = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   value: any,
   renderComponent: React.ReactElement
@@ -107,7 +107,7 @@ export const flagEqualsValueShouldRenderComponent = (
  * @param onCallback - The callback function to execute when the feature flag value is ON.
  */
 export const flagIsOnShouldCallback = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   onCallback: () => void
 ): void => {
@@ -128,7 +128,7 @@ export const flagIsOnShouldCallback = (
  * @param offCallback - The callback function to execute when the feature flag value is OFF.
  */
 export const flagIsOffShouldCallback = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   offCallback: () => void
 ): void => {
@@ -150,7 +150,7 @@ export const flagIsOffShouldCallback = (
  * @param equalsCallback - The callback function to execute when the feature flag value equals the specified value.
  */
 export const flagEqualsValueShouldCallback = (
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>,
+  featureFlagsValue: Record<string, FlagVariationValue>,
   key: string,
   value: any,
   equalsCallback: () => void
