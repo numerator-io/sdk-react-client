@@ -1,4 +1,4 @@
-name: React build and test request Workflow
+name: Analyze Pull Request
 
 on:
   push:
@@ -8,8 +8,6 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # github.workflow: name of the workflow
-  # github.event.pull_request.number || github.ref: pull request number or branch name if not a pull request
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}      
   cancel-in-progress: true
 
@@ -22,7 +20,6 @@ jobs:
         node-version: [18.x]
 
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -35,8 +32,8 @@ jobs:
     - name: Run lint
       run: yarn lint && yarn check      
 
-    - name: Run test
-      run: yarn test
-
     - name: Run build
       run: yarn build
+
+    - name: Run test
+      run: yarn test
