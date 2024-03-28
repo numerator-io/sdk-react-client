@@ -1,10 +1,11 @@
 name: React build and test request Workflow
 
 on:
+  push:
+    branches: [ $default-branch ]
   pull_request:
-    paths:
-     - src/*
-     - yarn.lock
+    branches: [ $default-branch ]
+  workflow_dispatch:
 
 concurrency:
   # github.workflow: name of the workflow
