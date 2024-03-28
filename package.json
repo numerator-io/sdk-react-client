@@ -1,6 +1,6 @@
 {
   "name": "numerator-react-client-sdk",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "Numerator SDK for ReactJS",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -23,19 +23,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/c0x12c/numerator-react-client-sdk.git"
+    "url": "https://github.com/numerator-io/sdk-react-client.git"
   },
   "keywords": [
     "numerator",
     "react-client-sdk",
     "feature-flags"
   ],
-  "author": "Numerator <dev-numerator@c0x12c.com>",
+  "author": "Numerator <support@numerator.io>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/c0x12c/numerator-react-client-sdk/issues"
+    "url": "https://github.com/numerator-io/sdk-react-client.git/issues"
   },
-  "homepage": "https://github.com/c0x12c/numerator-react-client-sdk#readme",
+  "homepage": "https://github.com/numerator-io/sdk-react-client.git#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
