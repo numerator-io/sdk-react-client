@@ -1,11 +1,10 @@
 name: Analyze Pull Request
 
 on:
-  push:
-    branches: [ $default-branch ]
   pull_request:
-    branches: [ $default-branch ]
-  workflow_dispatch:
+    paths:
+      - src/*
+      - yarn.lock
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}      
@@ -25,6 +24,9 @@ jobs:
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
 
     - name: Install dependencies
       run: CI=true yarn install
