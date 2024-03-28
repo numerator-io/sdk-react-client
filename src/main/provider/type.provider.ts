@@ -16,13 +16,13 @@ export interface NumeratorContextType {
    * @param key - The flag key of the feature flag to fetch value for.
    * @param defaultVal - Default value of boolean value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
-   * @param useDefaultContext - check using default context or not
+   * @param useDefaultContext - Optional check using default context or not
    */
   booleanFlagVariation(
     key: string,
     defaultVal: boolean,
-    context: Map<string, any> | undefined,
-    useDefaultContext: boolean,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
   ): Promise<FlagEvaluationDetail<boolean>>;
 
   /**
@@ -30,13 +30,13 @@ export interface NumeratorContextType {
    * @param key - The flag key of the feature flag to fetch value for.
    * @param defaultVal - Default value of number value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
-   * @param useDefaultContext - check using default context or not
+   * @param useDefaultContext - Optional check using default context or not
    */
   numberFlagVariation(
     key: string,
     defaultVal: number,
-    context: Map<string, any> | undefined,
-    useDefaultContext: boolean,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
   ): Promise<FlagEvaluationDetail<number>>;
 
   /**
@@ -44,13 +44,13 @@ export interface NumeratorContextType {
    * @param key - The flag key of the feature flag to fetch value for.
    * @param defaultVal - Default value of string value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
-   * @param useDefaultContext - check using default context or not
+   * @param useDefaultContext - Optional check using default context or not
    */
   stringFlagVariation(
     key: string,
     defaultVal: string,
-    context: Map<string, any> | undefined,
-    useDefaultContext: boolean,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
   ): Promise<FlagEvaluationDetail<string>>;
 
   /**
@@ -64,9 +64,9 @@ export interface NumeratorContextType {
    * Get feature flag value
    * @param key - The flag key of the feature flag to fetch value for.
    * @param context - Optional context data to be passed to the NumeratorClient.
-   * @param useDefaultContext - check using default context or not
+   * @param useDefaultContext - Optional check using default context or not
    */
-  getFeatureFlag(key: string, context: Map<string, any> | undefined, useDefaultContext: boolean): Promise<any>;
+  getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
 }
 
 export interface NumeratorProviderProps {
@@ -80,5 +80,5 @@ export interface NumeratorProviderProps {
   /**
    * The default context client send to NumeratorProvider
    */
-  defaultContext: Map<string, any>;
+  defaultContext: Record<string, any>;
 }

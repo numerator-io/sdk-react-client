@@ -101,5 +101,5 @@ export interface VariationValue {
 export interface FlagEvaluationDetail<T> {
   key: string,
   value: T,
-  reason: Map<string, any> | null
+  reason: Record<string, any> | null
 }

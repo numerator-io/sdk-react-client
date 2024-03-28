@@ -23,9 +23,9 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
 
-  const [featureFlags, setFeatureFlags] = useState<Map<string, any>>(new Map<string, any>());
+  const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
 
-  const flagValueByKey = async (key: string, context: Map<string, any> | undefined) => {
+  const flagValueByKey = async (key: string, context: Record<string, any> | undefined) => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
     return result;
   };
@@ -38,22 +38,22 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const booleanFlagVariation = async (
     key: string,
     defaultVal: boolean,
-    context: Map<string, any> | undefined = undefined,
+    context: Record<string, any> | undefined = undefined,
     useDefaultContext: boolean = true,
   ): Promise<FlagEvaluationDetail<boolean>> => {
     try {
-      const requestContext = context ?? (useDefaultContext ? defaultContext : new Map<string, any>());
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
       const variation = await flagValueByKey(key, requestContext);
       return {
         key: key,
         value: variation.value.booleanValue ?? false,
-        reason: new Map<string, any>(),
+        reason: {},
       };
     } catch (e) {
       return {
         key: key,
         value: defaultVal,
-        reason: new Map<string, any>(),
+        reason: {},
       };
     }
   };
@@ -61,22 +61,22 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const numberFlagVariation = async (
     key: string,
     defaultVal: number,
-    context: Map<string, any> | undefined = undefined,
+    context: Record<string, any> | undefined = undefined,
     useDefaultContext: boolean = true,
   ): Promise<FlagEvaluationDetail<number>> => {
     try {
-      const requestContext = context ?? (useDefaultContext ? defaultContext : new Map<string, any>());
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
       const variation = await flagValueByKey(key, requestContext);
       return {
         key: key,
         value: variation.value.longValue ?? variation.value.doubleValue ?? 0,
-        reason: new Map<string, any>(),
+        reason: {},
       };
     } catch (e) {
       return {
         key: key,
         value: defaultVal,
-        reason: new Map<string, any>(),
+        reason: {},
       };
     }
   };
@@ -84,37 +84,37 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const stringFlagVariation = async (
     key: string,
     defaultVal: string,
-    context: Map<string, any> | undefined = undefined,
+    context: Record<string, any> | undefined = undefined,
     useDefaultContext: boolean = true,
   ): Promise<FlagEvaluationDetail<string>> => {
     try {
-      const requestContext = context ?? (useDefaultContext ? defaultContext : new Map<string, any>());
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
       const variation = await flagValueByKey(key, requestContext);
       return {
         key: key,
         value: variation.value.stringValue ?? '',
-        reason: new Map<string, any>(),
+        reason: {},
       };
     } catch (e) {
       return {
         key: key,
         value: defaultVal,
-        reason: new Map<string, any>(),
+        reason: {},
       };
     }
   };
 
   const initFeatureFlag = (key: string, defaultVal: any) => {
-    featureFlags.set(key, defaultVal);
+    featureFlags[key] = defaultVal
     setFeatureFlags(featureFlags);
   };
 
   const getFeatureFlag = async (
     key: string,
-    context: Map<string, any> | undefined = undefined,
+    context: Record<string, any> | undefined = undefined,
     useDefaultContext: boolean = true,
   ): Promise<any> => {
-    const defaultVal = featureFlags.get(key);
+    const defaultVal = featureFlags[key];
     switch (typeof defaultVal) {
       case 'boolean':
         const resBoolean = await booleanFlagVariation(key, defaultVal, context, useDefaultContext);
