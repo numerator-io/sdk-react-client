@@ -35,10 +35,12 @@ jobs:
     - name: Install dependencies
       run: CI=true yarn install
 
-    - name: Publish package
+    - name: Set npm scope
       # Should be set in the repository's variables, current value now is: numerator-io
-      - run: npm set scope=@${{ github.repository_owner }}
-      - run: npm publish --provenance --access public
+      run: npm set scope=@${{ github.repository_owner }}
+
+    - name: Publish package
+      run: npm publish --provenance --access public
         env:
           # FIXME: ${{ secrets.NPM_TOKEN }} should replace and be set in the repository's secrets
           NODE_AUTH_TOKEN: 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
