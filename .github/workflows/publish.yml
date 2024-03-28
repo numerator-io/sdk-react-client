@@ -41,6 +41,6 @@ jobs:
 
     - name: Publish package
       run: npm publish --provenance --access public
-        env:
-          # FIXME: ${{ secrets.NPM_TOKEN }} should replace and be set in the repository's secrets
-          NODE_AUTH_TOKEN: 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
+      env:
+        # FIXME: ${{ secrets.NPM_TOKEN }} should replace and be set in the repository's secrets
+        NODE_AUTH_TOKEN: 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
