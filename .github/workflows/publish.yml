@@ -111,13 +111,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
+          # Should be set in the repository's variables, current value now is: numerator-io
+          scope: "@${{ github.repository_owner }}"
 
       - name: Install dependencies
         run: CI=true yarn install
-
-      - name: Set npm scope
-        # Should be set in the repository's variables, current value now is: numerator-io
-        run: npm set scope=@${{ github.repository_owner }}
 
       - name: Publish to npm registry
         run: yarn publish --provenance --access public
