@@ -1,5 +1,5 @@
 {
-  "name": "numerator-react-client-sdk",
+  "name": "@numerator/react-client-sdk",
   "version": "1.0.3",
   "description": "Numerator SDK for ReactJS",
   "main": "lib/index.js",

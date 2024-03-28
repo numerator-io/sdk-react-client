@@ -1,4 +1,5 @@
 name: Publish Package to npmjs
+
 on:
   release:
     types: [created]
@@ -10,37 +11,175 @@ on:
         required: false
         default: '18.x'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+env:
+  ENVIRONMENT: dev
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASE_VERSION: ${{ steps.changelog.outputs.releaseVersion }}
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 3
+          token: ${{ env.GITHUB_TOKEN }}
+
+      - name: Tracking CHANGELOG.md version
+        id: changelog
+        uses: btnguyen2k/action-semrelease@v3
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          tag-major-release: false
+          tag-minor-release: false
+          changelog-file: 'CHANGELOG.md'
+
+      - name: Update CHANGELOG.md and VERSION string in files
+        id: update_files
+        run: |
+          RELEASE_VERSION_PREVIOUS=$(cat manifest.json \
+            | grep version \
+            | head -1 \
+            | awk -F: '{ print $2 }' \
+            | sed 's/[ ",]//g'
+          )
+          RESULT='${{ steps.changelog.outputs.result }}'
+          if [ "${RESULT}" == "SUCCESS" ]; then
+            DATE=`date +%Y-%m-%d`
+            VERSION='${{ steps.changelog.outputs.releaseVersion }}'
+            if [ "${RELEASE_VERSION_PREVIOUS}" == "${VERSION}" ]; then
+              echo "RELEASE_VERSION_PREVIOUS and RELEASE_VERSION are equal. Stopping workflow."
+              exit 1
+            else
+            echo "RELEASE_VERSION_PREVIOUS and RELEASE_VERSION are not equal. Continuing workflow."
+            fi
+            RELEASE_NOTES='${{ steps.changelog.outputs.releaseNotes }}'
+
+            echo ===== 🕘 Updating VERSION string in file manifest.json...
+            sed -i -E "s/^(\s*\"version\"\s*:\s*)\"[^\"]+\"/\1\"${VERSION}\"/" manifest.json
+            echo ---------- content of manifest.json ----------
+            cat manifest.json
+
+            echo ===== 🕘 Updating VERSION string in file package.json...
+            sed -i -E "s/^(\s*\"version\"\s*:\s*)\"[^\"]+\"/\1\"${VERSION}\"/" package.json
+            echo ---------- content of package.json ----------
+            cat package.json
+
+            echo ===== 🕘 Committing updates...
+            git checkout -b release/${VERSION}
+            git config --global user.email "<>"
+            git config --global user.name "CI Build"
+            git commit -am "Update CHANGELOG.md and manifest.json for new version ${VERSION}"
+            git push -f origin release/${VERSION}
+
+            echo "✅ Done."
+          else
+            echo "❎ SKIPPED."
+          fi
+  build:
+    needs: pre-release
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18.x]
-
     permissions:
       contents: read
       id-token: write
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Logging Release Version
+        env:
+          RELEASE_VERSION: ${{needs.pre-release.outputs.RELEASE_VERSION}}
+        run: |
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        registry-url: 'https://registry.npmjs.org'
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 3
+          token: ${{ env.GITHUB_TOKEN }}
+          ref: "release/${{ env.RELEASE_VERSION }}"
 
-    - name: Install dependencies
-      run: CI=true yarn install
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
 
-    - name: Set npm scope
-      # Should be set in the repository's variables, current value now is: numerator-io
-      run: npm set scope=@${{ github.repository_owner }}
+      - name: Install dependencies
+        run: CI=true yarn install
 
-    - name: Publish package
-      run: npm publish --provenance --access public
-      env:
-        # FIXME: ${{ secrets.NPM_TOKEN }} should replace and be set in the repository's secrets
-        NODE_AUTH_TOKEN: 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
+      - name: Set npm scope
+        # Should be set in the repository's variables, current value now is: numerator-io
+        run: npm set scope=@${{ github.repository_owner }}
+
+      - name: Publish to npm registry
+        run: yarn publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: "Extract Git info"
+        run: |
+          echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
+          echo "GITHUB_REVISION=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "GITHUB_REPO=$(git config --get remote.origin.url)" >> $GITHUB_ENV
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          GITHUB_COMMITS=$(git --no-pager log --pretty=format:'%h (%an) %s' -n3 --no-color |  while read line || [ -n "$line" ]; do echo -n "- $line \\n"; done)
+          echo "GITHUB_COMMITS<<$EOF" >> "$GITHUB_ENV"
+          echo $GITHUB_COMMITS | sed "s/\"/'/g" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+
+      - name: Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "channel": "${{ vars.SLACK_CHANNEL }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rocket: *${{ github.event.repository.name }} - Published to DEV*"
+                  }
+                },{
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Created by:* ${{ env.GITHUB_AUTHOR }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${{ env.GITHUB_COMMITS }}```"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View changes"
+                      },
+                      "style": "primary",
+                      "url": "${{ env.GITHUB_REPO }}/commit/${{ env.GITHUB_REVISION}}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
