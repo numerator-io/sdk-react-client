@@ -10,6 +10,9 @@ on:
         description: 'Release version (e.g., 1.0.0)'
         required: true
 
+  env:
+    GIT_API_BASE_URL: https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}
+
 jobs:
   validate-release-version:
     # Only run this job if manually triggered
@@ -35,7 +38,7 @@ jobs:
       - name: Check if release version not exists
         run: |
           version=${{ github.event.inputs.release_version }}
-          if curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/releases/tags/$version | grep -q '404'; then
+          if curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" ${{ env.GIT_API_BASE_URL }}/releases/tags/$version | grep -q '404'; then
             echo "Release version $version does not exist."
             exit 1
           fi
@@ -54,13 +57,13 @@ jobs:
           final_tag_name=if [ -z "${{ github.event_name == 'workflow_dispatch' }}" ]; then echo "${{ github.event.inputs.release_version }}"; else echo "${{ github.event.release.tag_name }}"; fi
           release_id=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                         -H "Accept: application/vnd.github.v3+json" \
-                        https://api.github.com/repos/${{ github.repository }}/releases/tags/${final_tag_name} | jq -r '.id')
+                        ${{ env.GIT_API_BASE_URL }}/releases/tags/${final_tag_name} | jq -r '.id')
           release_tag=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                         -H "Accept: application/vnd.github.v3+json" \
-                        https://api.github.com/repos/${{ github.repository }}/releases/${release_id} | jq -r '.tag_name')
+                        ${{ env.GIT_API_BASE_URL }}/releases/${release_id} | jq -r '.tag_name')
           release_notes=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                           -H "Accept: application/vnd.github.v3+json" \
-                          https://api.github.com/repos/${{ github.repository }}/releases/${release_id} | jq -r '.body')
+                          ${{ env.GIT_API_BASE_URL }}/releases/${release_id} | jq -r '.body')
 
           echo "::set-output name=tag::$release_tag"
           echo "::set-output name=notes::$release_notes"
