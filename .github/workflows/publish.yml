@@ -100,7 +100,7 @@ jobs:
           body: "Release ${{ needs.release-info-extraction.outputs.tag }}"
           branch: release/${{ needs.release-info-extraction.outputs.tag }}
           base: master
-          assignees: {{ github.actor }}
+          assignees: ${{ github.actor }}
 
   publish:
     needs: pre-release
