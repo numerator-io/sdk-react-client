@@ -10,8 +10,8 @@ on:
         description: 'Release version (e.g., 1.0.0)'
         required: true
 
-  env:
-    GIT_API_BASE_URL: https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}
+env:
+  GIT_API_BASE_URL: https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}
 
 jobs:
   validate-release-version:
