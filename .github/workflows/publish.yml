@@ -6,83 +6,103 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      node-version:
-        description: 'Node.js version'
-        required: false
-        default: '18.x'
-
-env:
-  ENVIRONMENT: dev
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      release_version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
 
 jobs:
-  pre-release:
+  validate-release-version:
+    # Only run this job if manually triggered
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    outputs:
-      RELEASE_VERSION: ${{ steps.changelog.outputs.releaseVersion }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Validate input release version
+      - name: Check input release version
+        run: |
+          if [ -z "${{ github.event.inputs.release-version }}" ]; then
+            echo "Missing input 'release-version'."
+            exit 1
+          fi
+      - name: Validate release version
+        run: |
+          if [[ ! ${{ github.event.inputs.release_version }} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release version format. Please use MAJOR.MINOR.PATCH format (e.g., 1.0.0)"
+            exit 1
+          fi
+      - name: Check if release version not exists
+        run: |
+          version=${{ github.event.inputs.release_version }}
+          if curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/releases/tags/$version | grep -q '404'; then
+            echo "Release version $version does not exist."
+            exit 1
+          fi
+
+  release-info-extraction:
+    needs: validate-release-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Get release information using GitHub API
+      - name: Extract release information
+        id: release_info
+        run: |
+          final_tag_name=if [ -z "${{ github.event_name == 'workflow_dispatch' }}" ]; then echo "${{ github.event.inputs.release_version }}"; else echo "${{ github.event.release.tag_name }}"; fi
+          release_id=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        https://api.github.com/repos/${{ github.repository }}/releases/tags/${final_tag_name} | jq -r '.id')
+          release_tag=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        https://api.github.com/repos/${{ github.repository }}/releases/${release_id} | jq -r '.tag_name')
+          release_notes=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                          -H "Accept: application/vnd.github.v3+json" \
+                          https://api.github.com/repos/${{ github.repository }}/releases/${release_id} | jq -r '.body')
+
+          echo "::set-output name=tag::$release_tag"
+          echo "::set-output name=notes::$release_notes"
+
+  pre-release:
+    needs: release-info-extraction
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 3
-          token: ${{ env.GITHUB_TOKEN }}
 
-      - name: Tracking CHANGELOG.md version
-        id: changelog
-        uses: btnguyen2k/action-semrelease@v3
-        with:
-          github-token: ${{ env.GITHUB_TOKEN }}
-          tag-major-release: false
-          tag-minor-release: false
-          changelog-file: 'CHANGELOG.md'
-
-      - name: Update CHANGELOG.md and VERSION string in files
-        id: update_files
+      - name: Append release notes to CHANGELOG.md if not exists changes log
         run: |
-          RELEASE_VERSION_PREVIOUS=$(cat manifest.json \
-            | grep version \
-            | head -1 \
-            | awk -F: '{ print $2 }' \
-            | sed 's/[ ",]//g'
-          )
-          RESULT='${{ steps.changelog.outputs.result }}'
-          if [ "${RESULT}" == "SUCCESS" ]; then
-            DATE=`date +%Y-%m-%d`
-            VERSION='${{ steps.changelog.outputs.releaseVersion }}'
-            if [ "${RELEASE_VERSION_PREVIOUS}" == "${VERSION}" ]; then
-              echo "RELEASE_VERSION_PREVIOUS and RELEASE_VERSION are equal. Stopping workflow."
-              exit 1
-            else
-            echo "RELEASE_VERSION_PREVIOUS and RELEASE_VERSION are not equal. Continuing workflow."
-            fi
-            RELEASE_NOTES='${{ steps.changelog.outputs.releaseNotes }}'
-
-            echo ===== 🕘 Updating VERSION string in file manifest.json...
-            sed -i -E "s/^(\s*\"version\"\s*:\s*)\"[^\"]+\"/\1\"${VERSION}\"/" manifest.json
-            echo ---------- content of manifest.json ----------
-            cat manifest.json
-
-            echo ===== 🕘 Updating VERSION string in file package.json...
-            sed -i -E "s/^(\s*\"version\"\s*:\s*)\"[^\"]+\"/\1\"${VERSION}\"/" package.json
-            echo ---------- content of package.json ----------
-            cat package.json
-
-            echo ===== 🕘 Committing updates...
-            git checkout -b release/${VERSION}
-            git config --global user.email "<>"
-            git config --global user.name "CI Build"
-            git commit -am "Update required files for new version ${VERSION}"
-            git push -f origin release/${VERSION}
-
-            echo "✅ Done."
-          else
-            echo "❎ SKIPPED."
+          if [ ! -f "CHANGELOG.md" ]; then
+            echo "# Changelog" >> CHANGELOG.md
           fi
-  build:
+          echo "" >> CHANGELOG.md
+          echo "## Release ${{ needs.release-info-extraction.outputs.tag }}" >> CHANGELOG.md
+          echo "${{ needs.release-info-extraction.outputs.notes }}" >> CHANGELOG.md
+
+      - name: Create the release branch if not exists
+        run: |
+          git fetch --prune --unshallow
+          git checkout -b release/${{ needs.release-info-extraction.outputs.tag }} || true
+          git commit -am "Add release notes for ${{ needs.release-info-extraction.outputs.tag }}"
+          git push origin release/${{ needs.release-info-extraction.outputs.tag }}
+
+      - name: Create the pull request and merge release branch to master
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add release notes for ${{ needs.release-info-extraction.outputs.tag }}"
+          title: "Release ${{ needs.release-info-extraction.outputs.tag }}"
+          body: "Release ${{ needs.release-info-extraction.outputs.tag }}"
+          branch: release/${{ needs.release-info-extraction.outputs.tag }}
+          base: master
+          assignees: {{ github.actor }}
+
+  publish:
     needs: pre-release
     runs-on: ubuntu-latest
     strategy:
@@ -93,25 +113,18 @@ jobs:
       id-token: write
 
     steps:
-      - name: Logging Release Version
-        env:
-          RELEASE_VERSION: ${{needs.pre-release.outputs.RELEASE_VERSION}}
-        run: |
-          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
-
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           fetch-depth: 3
-          token: ${{ env.GITHUB_TOKEN }}
-          ref: "release/${{ env.RELEASE_VERSION }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: "refs/tags/${{ needs.release-info-extraction.outputs.tag }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
-          # Should be set in the repository's variables, current value now is: numerator-io
           scope: "@${{ github.repository_owner }}"
 
       - name: Install dependencies
@@ -120,7 +133,8 @@ jobs:
       - name: Publish to npm registry
         run: yarn publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
 
       - name: "Extract Git info"
         run: |
@@ -146,13 +160,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":rocket: *${{ github.event.repository.name }} - Published to DEV*"
+                    "text": ":rocket: *${{ github.event.repository.name }} - Published package to npmjs*"
                   }
-                },{
+                },
+                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Created by:* ${{ env.GITHUB_AUTHOR }}"
+                    "text": "*Last Changes by:* ${{ env.GITHUB_AUTHOR }}"
                   }
                 },
                 {
@@ -163,16 +178,32 @@ jobs:
                   }
                 },
                 {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Release Notes:* ${{ needs.release-info-extraction.outputs.notes }}"
+                  }
+                },
+                {
                   "type": "actions",
                   "elements": [
                     {
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "View changes"
+                        "text": "View Release"
                       },
                       "style": "primary",
-                      "url": "${{ env.GITHUB_REPO }}/commit/${{ env.GITHUB_REVISION}}"
+                      "url": "${{ env.GITHUB_REPO }}/releases/tag/${{ needs.release-info-extraction.outputs.tag }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View package"
+                      },
+                      "style": "primary",
+                      "url": "https://www.npmjs.com/package/@${{ github.repository_owner }}/{{ github.repository_owner }}/v/${{ needs.release-info-extraction.outputs.tag }}"
                     }
                   ]
                 }
