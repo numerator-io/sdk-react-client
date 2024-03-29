@@ -75,7 +75,7 @@ jobs:
             git checkout -b release/${VERSION}
             git config --global user.email "<>"
             git config --global user.name "CI Build"
-            git commit -am "Update CHANGELOG.md and manifest.json for new version ${VERSION}"
+            git commit -am "Update required files for new version ${VERSION}"
             git push -f origin release/${VERSION}
 
             echo "✅ Done."

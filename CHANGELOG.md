@@ -1,8 +1,5 @@
 # Changelog
 
-## 2024-03-29 - v1.0.0-beta.1
-- Create a pre-release
-
 ## 2024-02-26 - unreleased
 - Implemented pre-release version workflow
 - Implemented new features in the numerator SDK to enhance its functionality.
