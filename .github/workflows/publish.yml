@@ -22,8 +22,8 @@ jobs:
       # Validate input release version
       - name: Check input release version
         run: |
-          if [ -z "${{ github.event.inputs.release-version }}" ]; then
-            echo "Missing input 'release-version'."
+          if [ -z "${{ github.event.inputs.release_version }}" ]; then
+            echo "Missing input 'release_version'."
             exit 1
           fi
       - name: Validate release version
