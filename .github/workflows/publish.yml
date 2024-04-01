@@ -15,8 +15,6 @@ env:
   GITHUB_OWNER: ${{ github.repository_owner }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  BOT_EMAIL: bot@numerator.io
-  BOT_USERNAME: Numerator Bot
 
 jobs:
   validate-release-version:
@@ -48,7 +46,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 3
+          token: ${{ env.GITHUB_TOKEN }}
+
       - name: Get release info
         uses: actions/github-script@v7
         id: release_info
@@ -94,7 +95,7 @@ jobs:
             core.setOutput('release_exists', releaseVersionExists.exists);
             core.setOutput('release_notes', releaseVersionExists.releaseNotes);
 
-  pre-release:
+  pre-publish:
     needs: release-info-extraction
     runs-on: ubuntu-latest
     permissions:
@@ -103,23 +104,29 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 3
+          token: ${{ env.GITHUB_TOKEN }}
+          ref: 'refs/tags/${{ needs.release-info-extraction.outputs.release_version }}'
 
       - name: Append release notes to CHANGELOG.md and create release branch
         env:
           RELEASE_BRANCH: release/${{ needs.release-info-extraction.outputs.release_version }}
           RELEASE_VERSION: ${{ needs.release-info-extraction.outputs.release_version }}
         run: |
+          echo "Starting pre-publish steps"
           git fetch --all
-          git config user.name "${{ env.BOT_USERNAME }}"
-          git config user.email "${{ env.BOT_EMAIL }}"
+          git config --global user.email "github-actions@c0x12c.com"
+          git config --global user.name "Github Actions"
 
-          # Check if the branch exists
+          echo "Checking if branch $RELEASE_BRANCH exists."
           if git rev-parse --verify $RELEASE_BRANCH >/dev/null 2>&1; then
             echo "Branch $RELEASE_BRANCH already exists."
           else
-            # If the branch doesn't exist, create it
-            git checkout tags/${RELEASE_VERSION} -b $RELEASE_BRANCH
+            echo "Checking out branch $RELEASE_BRANCH"
+            git checkout -b $RELEASE_BRANCH
 
+            echo "Adding release notes to CHANGELOG.md"
             if [ ! -f "CHANGELOG.md" ]; then
               echo "# Changelog" >> CHANGELOG.md
             fi
@@ -127,8 +134,11 @@ jobs:
             echo "## Release ${{ needs.release-info-extraction.outputs.release_version }}" >> CHANGELOG.md
             echo "${{ needs.release-info-extraction.outputs.release_notes }}" >> CHANGELOG.md
 
+            echo "Committing changes"
             git add CHANGELOG.md
             git commit -m "Add release notes for $RELEASE_VERSION"
+
+            echo "Pushing changes to $RELEASE_BRANCH"
             git push origin $RELEASE_BRANCH
           fi
 
@@ -153,7 +163,7 @@ jobs:
 
   publish:
     needs:
-      - pre-release
+      - pre-publish
       - release-info-extraction
     runs-on: ubuntu-latest
     strategy:
