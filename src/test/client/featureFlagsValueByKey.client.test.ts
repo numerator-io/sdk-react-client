@@ -1,5 +1,5 @@
 import { NumeratorClient } from '../../main';
-import { FeatureFlagValue, FlagStatusEnum, FlagValueTypeEnum, VariationValue } from '../../main/client/type.client';
+import { FlagVariationValue, FlagStatusEnum, FlagValueTypeEnum, VariationValue } from '../../main/client/type.client';
 
 // Mock ApiClient
 jest.mock('../../main/client/api.client');
@@ -22,17 +22,17 @@ describe('NumeratorClient', () => {
   describe('featureFlagValueByKey', () => {
     it('should fetch featureFlagValueByKey successfully', async () => {
       // Mock ApiClient's request method to resolve with mock data
-      const data: FeatureFlagValue<VariationValue> = {
+      const data: FlagVariationValue = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
         value: { longValue: 555 },
         valueType: FlagValueTypeEnum.LONG,
       };
 
-      const response: FeatureFlagValue<number> = {
+      const response: FlagVariationValue = {
         key: 'feature1',
         status: FlagStatusEnum.ON,
-        value: 555,
+        value: { longValue: 555 },
         valueType: FlagValueTypeEnum.LONG,
       };
 
@@ -42,7 +42,7 @@ describe('NumeratorClient', () => {
       });
 
       const numeratorClient = new NumeratorClient(mockConfig);
-      const result = await numeratorClient.featureFlagValueByKey({
+      const result = await numeratorClient.getFeatureFlagByKey({
         key: 'feature1',
         context: {
           userId: 'user123',
@@ -64,7 +64,7 @@ describe('NumeratorClient', () => {
 
       // Assert that the error is thrown
       await expect(
-        numeratorClient.featureFlagValueByKey({
+        numeratorClient.getFeatureFlagByKey({
           key: 'feature1',
           context: {
             userId: 'user123',
@@ -84,7 +84,7 @@ describe('NumeratorClient', () => {
 
       // Assert that the "Feature Flag not found" error is thrown
       await expect(
-        numeratorClient.featureFlagValueByKey({
+        numeratorClient.getFeatureFlagByKey({
           key: 'feature1',
           context: {
             userId: 'user123',

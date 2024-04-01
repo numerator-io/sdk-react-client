@@ -1,10 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import NumeratorClient from '../client';
+import {
+  ConfigClient,
+  FeatureFlagConfig,
+  FlagEvaluationDetail
+} from '../client/type.client';
 import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
-import { mapArrayToRecord } from '../util';
-import { ConfigClient, FeatureFlagConfig, FeatureFlagValue } from '../client/type.client';
 
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
@@ -16,63 +19,125 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
 };
 
 // Create a provider component
-export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
-  children,
-  configClient,
-  loadAllFlagsConfigOnMount,
-  loadFeatureFlagsValueOnMount,
-}) => {
+export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext }) => {
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
 
-  const [featureFlagsConfig, setFeatureFlagsConfig] = useState<Record<string, FeatureFlagConfig>>({});
-  const [featureFlagsValue, setFeatureFlagsState] = useState<Record<string, FeatureFlagValue<any>>>({});
+  const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
 
-  const fetchAllFeatureFlagsConfig = async () => {
+  const flagValueByKey = async (key: string, context: Record<string, any> | undefined) => {
+    const result = await numeratorClient.getFeatureFlagByKey({ key, context });
+    return result;
+  };
+
+  const allFlags = async (): Promise<FeatureFlagConfig[]> => {
     const allFlagsConfig = await numeratorClient.allFeatureFlagsConfig();
-    setFeatureFlagsConfig(mapArrayToRecord(allFlagsConfig));
+    return allFlagsConfig;
   };
 
-  const fetchFeatureFlagConfig = async ({ key }: { key: string }) => {
-    const flagConfigRes = await numeratorClient.featureFlagConfigByKey(key);
-
-    // Update the state directly with the new Record containing a single FeatureFlag
-    setFeatureFlagsConfig((prevFeatureFlagsConfig) => ({
-      ...prevFeatureFlagsConfig,
-      [flagConfigRes.key]: flagConfigRes,
-    }));
+  const booleanFlagVariation = async (
+    key: string,
+    defaultVal: boolean,
+    context: Record<string, any> | undefined = undefined,
+    useDefaultContext: boolean = true,
+  ): Promise<FlagEvaluationDetail<boolean>> => {
+    try {
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
+      const variation = await flagValueByKey(key, requestContext);
+      return {
+        key: key,
+        value: variation.value.booleanValue ?? false,
+        reason: {},
+      };
+    } catch (e) {
+      return {
+        key: key,
+        value: defaultVal,
+        reason: {},
+      };
+    }
   };
 
-  const fetchFeatureFlagValue = async ({ key, context }: { key: string; context?: Record<string, any> }) => {
-    const flagValueRes = await numeratorClient.featureFlagValueByKey({ key: key, context });
+  const numberFlagVariation = async (
+    key: string,
+    defaultVal: number,
+    context: Record<string, any> | undefined = undefined,
+    useDefaultContext: boolean = true,
+  ): Promise<FlagEvaluationDetail<number>> => {
+    try {
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
+      const variation = await flagValueByKey(key, requestContext);
+      return {
+        key: key,
+        value: variation.value.longValue ?? variation.value.doubleValue ?? 0,
+        reason: {},
+      };
+    } catch (e) {
+      return {
+        key: key,
+        value: defaultVal,
+        reason: {},
+      };
+    }
+  };
 
-    // Update the state directly with the new Record containing a single FeatureFlagState
-    setFeatureFlagsState((prevFeatureFlagsValue) => ({
-      ...prevFeatureFlagsValue,
-      [flagValueRes.key]: flagValueRes,
-    }));
+  const stringFlagVariation = async (
+    key: string,
+    defaultVal: string,
+    context: Record<string, any> | undefined = undefined,
+    useDefaultContext: boolean = true,
+  ): Promise<FlagEvaluationDetail<string>> => {
+    try {
+      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
+      const variation = await flagValueByKey(key, requestContext);
+      return {
+        key: key,
+        value: variation.value.stringValue ?? '',
+        reason: {},
+      };
+    } catch (e) {
+      return {
+        key: key,
+        value: defaultVal,
+        reason: {},
+      };
+    }
+  };
+
+  const initFeatureFlag = (key: string, defaultVal: any) => {
+    featureFlags[key] = defaultVal
+    setFeatureFlags(featureFlags);
+  };
+
+  const getFeatureFlag = async (
+    key: string,
+    context: Record<string, any> | undefined = undefined,
+    useDefaultContext: boolean = true,
+  ): Promise<any> => {
+    const defaultVal = featureFlags[key];
+    switch (typeof defaultVal) {
+      case 'boolean':
+        const resBoolean = await booleanFlagVariation(key, defaultVal, context, useDefaultContext);
+        return resBoolean.value as boolean;
+      case 'number':
+        const resNumber = await numberFlagVariation(key, defaultVal, context, useDefaultContext);
+        return resNumber.value as number;
+
+      case 'string':
+        const resString = await stringFlagVariation(key, defaultVal, context, useDefaultContext);
+        return resString.value as string;
+    }
   };
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
-    featureFlagsConfig,
-    featureFlagsValue,
-    fetchAllFeatureFlagsConfig,
-    fetchFeatureFlagConfig,
-    fetchFeatureFlagValue,
+    allFlags,
+    booleanFlagVariation,
+    numberFlagVariation,
+    stringFlagVariation,
+    initFeatureFlag,
+    getFeatureFlag,
   };
-
-  useEffect(() => {
-    if (loadAllFlagsConfigOnMount) {
-      fetchAllFeatureFlagsConfig();
-    }
-
-    if (loadFeatureFlagsValueOnMount && Object.keys(loadFeatureFlagsValueOnMount).length > 0) {
-      Object.keys(loadFeatureFlagsValueOnMount).forEach((key) => {
-        fetchFeatureFlagValue({ key, context: loadFeatureFlagsValueOnMount[key] });
-      });
-    }
-  }, []);
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
 };

@@ -1,37 +1,72 @@
 import { ReactNode } from 'react';
-import { FeatureFlagConfig, FeatureFlagValue, ConfigClient } from '../client/type.client';
+import {
+  ConfigClient,
+  FeatureFlagConfig,
+  FlagEvaluationDetail
+} from '../client/type.client';
 
 export interface NumeratorContextType {
   /**
-   * Record of feature flags configuration.
-   * Keys are feature flag keys, values are the corresponding feature flag configurations.
+   * Get all feature flags
    */
-  featureFlagsConfig: Record<string, FeatureFlagConfig>;
+  allFlags(): Promise<FeatureFlagConfig[]>;
 
   /**
-   * Record of feature flags values.
-   * Keys are feature flag keys, values are the corresponding feature flag values.
-   */
-  featureFlagsValue: Record<string, FeatureFlagValue<any>>;
-
-  /**
-   * Function to fetch configuration for all feature flags.
-   * This function retrieves configuration data for all feature flags and updates the context.
-   */
-  fetchAllFeatureFlagsConfig: () => void;
-
-  /**
-   * Function to fetch configuration for a specific feature flag.
-   * @param key - The key of the feature flag to fetch configuration for.
-   */
-  fetchFeatureFlagConfig: ({ key }: { key: string }) => void;
-
-  /**
-   * Function to fetch value for a specific feature flag.
-   * @param key - The key of the feature flag to fetch value for.
+   * Retrieves the boolean object
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of boolean value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param useDefaultContext - Optional check using default context or not
    */
-  fetchFeatureFlagValue: ({ key, context }: { key: string; context?: Record<string, any> }) => void;
+  booleanFlagVariation(
+    key: string,
+    defaultVal: boolean,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
+  ): Promise<FlagEvaluationDetail<boolean>>;
+
+  /**
+   * Retrieves the number object
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of number value if not get flag variation
+   * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param useDefaultContext - Optional check using default context or not
+   */
+  numberFlagVariation(
+    key: string,
+    defaultVal: number,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
+  ): Promise<FlagEvaluationDetail<number>>;
+
+  /**
+   * Retrieves the string object
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of string value if not get flag variation
+   * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param useDefaultContext - Optional check using default context or not
+   */
+  stringFlagVariation(
+    key: string,
+    defaultVal: string,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
+  ): Promise<FlagEvaluationDetail<string>>;
+
+  /**
+   * Initialize new feature flag
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of string value if not get flag variation
+   */
+  initFeatureFlag(key: string, defaultVal: any): void;
+
+  /**
+   * Get feature flag value
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param useDefaultContext - Optional check using default context or not
+   */
+  getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
 }
 
 export interface NumeratorProviderProps {
@@ -43,23 +78,7 @@ export interface NumeratorProviderProps {
   configClient: ConfigClient;
 
   /**
-   * Whether to load all feature flags configuration on mount.
-   * If true, the NumeratorProvider will fetch and load all feature flags configuration when it mounts.
-   * Defaults to false.
+   * The default context client send to NumeratorProvider
    */
-  loadAllFlagsConfigOnMount?: boolean;
-
-  /**
-   * Optional: load the values for feature flags on component mount.
-   * The keys represent feature flag names, and each value is a context object associated with that feature flag.
-   * This allows you to set the initial context for specific feature flags.
-   * Example:
-   * ```
-   * {
-   *   featureFlagKey1: { userId: 1 },
-   *   featureFlagKey2: { companyId: 42 },
-   * }
-   * ```
-   */
-  loadFeatureFlagsValueOnMount?: Record<string, Record<string, any>>;
+  defaultContext: Record<string, any>;
 }
