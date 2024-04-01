@@ -1,12 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import NumeratorClient from '../client';
-import { ConfigClient, FeatureFlagConfig, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
 import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { useDefaultContext } from './useDefaultContext';
+import { areObjectsEqual } from '../util';
 
 const pjson = require('../../../package.json')
+
+const POLLING_INTERVAL = 60000; // 1 minute
 
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
@@ -24,9 +27,25 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const [flags, setFlags] = useState<Record<string, any>>({});
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
 
+  const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({});
+  const [currentEtag, setCurrentEtag] = useState<string>();
+
   const version = () => {
     return pjson.version
   }
+
+  const fetchPollingFeatureFlag = async () => {
+    const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
+    setCurrentEtag(result.etag);
+    const cache = result.flags.reduce(
+      (acc, flag) => {
+        acc[flag.key] = flag;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+    setCacheFlags(cache);
+  };
 
   const flagValueByKey = async (key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue> => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
@@ -118,22 +137,40 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     useDefaultContext: boolean = true,
   ): Promise<any> => {
     const defaultVal = flags[key];
+    const hasCacheValue = !!context && cacheFlags.hasOwnProperty(key) && areObjectsEqual(context, defaultContext);
     switch (typeof defaultVal) {
       case 'boolean':
+        if (hasCacheValue) {
+          return (cacheFlags[key].value.booleanValue as boolean) ?? defaultVal;
+        }
         const resBoolean = await booleanFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resBoolean.value as boolean;
       case 'number':
+        if (hasCacheValue) {
+          return cacheFlags[key].value.longValue ?? (cacheFlags[key].value.doubleValue as number) ?? defaultVal;
+        }
         const resNumber = await numberFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resNumber.value as number;
 
       case 'string':
+        if (hasCacheValue) {
+          return (cacheFlags[key].value.stringValue as string) ?? defaultVal;
+        }
         const resString = await stringFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resString.value as string;
+      default:
+        throw Error('Unsupported flag type');
     }
   };
 
   const { getDefaultContext, clearDefaultContext, addDefaultContextValue, removeDefaultContextValue } =
     useDefaultContext(defaultContextValues, setDefaultContextValues);
+    
+  useEffect(() => {
+    const timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL);
+
+    return () => clearInterval(timeInterval);
+  }, []);
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
@@ -149,6 +186,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     clearDefaultContext,
     addDefaultContextValue,
     removeDefaultContextValue,
+    fetchPollingFeatureFlag,
   };
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
