@@ -117,7 +117,7 @@ jobs:
       #   run: |
       #     echo "Starting pre-publish steps"
       #     git fetch --all
-      #     git config --global user.email "github-actions@c0x12c.com"
+      #     git config --global user.email "github-actions@numerator.io"
       #     git config --global user.name "Github Actions"
 
       #     echo "Checking if branch $RELEASE_BRANCH exists."

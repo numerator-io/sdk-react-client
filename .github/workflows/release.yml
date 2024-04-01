@@ -1,0 +1,28 @@
+name: Tagged Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  tagged-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create release and generate changelog
+        uses: softprops/action-gh-release@v2
+        
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "*.zip, *.tar.gz"
+          generateReleaseNotes: true
+          name: "Release v${{ github.ref }}"
+          prerelease: true
+          tag: ${{ github.ref }}
+          token: ${{ env.GITHUB_TOKEN }}
