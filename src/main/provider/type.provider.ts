@@ -67,6 +67,13 @@ export interface NumeratorContextType {
    * @param useDefaultContext - Optional check using default context or not
    */
   getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+  
+  /**
+   * Get polling flag value
+   * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param eTag - The tag to check if value update or not
+   */
+  fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
 }
 
 export interface NumeratorProviderProps {

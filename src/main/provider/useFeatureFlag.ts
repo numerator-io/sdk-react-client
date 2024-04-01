@@ -1,42 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
-
 import NumeratorClient from '../client';
-import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail } from '../client/type.client';
-import { NumeratorContext } from './context.provider';
-import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
-import { areObjectsEqual } from '../util';
+import { FeatureFlagConfig, FlagCollection, FlagEvaluationDetail } from '../client/type.client';
+import { areObjectsEqual } from '../util/common.util';
 
-const POLLING_INTERVAL = 60000; // 1 minute
-
-const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
-  const numeratorClient: NumeratorClient = new NumeratorClient({
-    apiKey: configClient.apiKey,
-    baseUrl: configClient.baseUrl || 'https://service-platform.dev.numerator.io',
-  });
-
-  return numeratorClient;
-};
-
-// Create a provider component
-export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext }) => {
-  // Initialize the SDK client
-  const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
-  const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({});
-  const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
-  const [currentEtag, setCurrentEtag] = useState<string>();
-
-  const fetchPollingFeatureFlag = async () => {
-    const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
-    setCurrentEtag(result.etag);
-    const cache = result.flags.reduce(
-      (acc, flag) => {
-        acc[flag.key] = flag;
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-    setCacheFlags(cache);
-  };
+function useFeatureFlag(
+  numeratorClient: NumeratorClient,
+  defaultContext: Record<string, any>,
+  cacheFlags: Record<string, FlagCollection>,
+  featureFlags: Record<string, any>,
+  setFeatureFlags: React.Dispatch<React.SetStateAction<Record<string, any>>>,
+) {
 
   const flagValueByKey = async (key: string, context: Record<string, any> | undefined) => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
@@ -154,31 +126,12 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     }
   };
 
-  useEffect(() => {
-    const timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL);
-
-    return () => clearInterval(timeInterval);
-  }, []);
-
-  // Create an object with SDK methods and state to be shared
-  const sdkContextValue: NumeratorContextType = {
+  return {
     allFlags,
     booleanFlagVariation,
     numberFlagVariation,
     stringFlagVariation,
     initFeatureFlag,
     getFeatureFlag,
-    fetchPollingFeatureFlag,
   };
-
-  return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
-};
-
-// Custom hook to access the SDK context value
-export const useNumeratorContext = () => {
-  const context = useContext(NumeratorContext);
-  if (!context) {
-    throw new Error('NumeratorClient must be used within a NumeratorProvider');
-  }
-  return context;
-};
+}

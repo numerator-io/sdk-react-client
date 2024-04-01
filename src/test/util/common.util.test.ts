@@ -1,4 +1,4 @@
-import { deepCopy, mapArrayToRecord, sleep, withTimeout } from '../../main/util';
+import { deepCopy, mapArrayToRecord, sleep, withTimeout, areObjectsEqual } from '../../main/util';
 
 describe('Utility Functions', () => {
   describe('deepCopy', () => {
@@ -57,5 +57,19 @@ describe('Utility Functions', () => {
       const originalPromise = new Promise((resolve) => setTimeout(() => resolve('result'), 200));
       await expect(withTimeout(originalPromise, 100)).rejects.toThrow('Operation timed out');
     });
+  });
+});
+
+describe('areObjectsEqual', () => {
+  it('should return true for equal objects', () => {
+      const obj1: Record<string, any> = { name: 'John', age: 30, hobbies: ['reading', 'painting'] };
+      const obj2: Record<string, any> = { name: 'John', age: 30, hobbies: ['reading', 'painting'] };
+      expect(areObjectsEqual(obj1, obj2)).toBe(true);
+  });
+
+  it('should return false for unequal objects', () => {
+      const obj1: Record<string, any> = { name: 'John', age: 30, hobbies: ['reading', 'painting'] };
+      const obj3: Record<string, any> = { name: 'Jane', age: 25, hobbies: ['coding', 'gaming'] };
+      expect(areObjectsEqual(obj1, obj3)).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // --- Types for ConfigClient --- //
 export type ConfigClient = {
@@ -55,6 +55,10 @@ export interface FeatureFlagConfigListingResponse extends PaginationResponse<Fea
   data: FeatureFlagConfig[];
 }
 
+export interface FeatureFlagPollingResponse {
+  flags: FlagCollection[],
+  etag: string
+}
 // --- Types for Feature Flag --- //
 export type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';
 
@@ -102,4 +106,12 @@ export interface FlagEvaluationDetail<T> {
   key: string,
   value: T,
   reason: Record<string, any> | null
+}
+
+export interface FlagCollection {
+  id: string,
+  key: string,
+  value: VariationValue,
+  valueType: FlagValueTypeEnum,
+  createdAt: string
 }

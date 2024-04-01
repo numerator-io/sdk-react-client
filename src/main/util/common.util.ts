@@ -40,16 +40,54 @@ export const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T>
  */
 export const snakeToCamel = (obj: any): any => {
   if (obj === null || typeof obj !== 'object') {
-      return obj;
+    return obj;
   }
 
   if (Array.isArray(obj)) {
-      return obj.map(snakeToCamel);
+    return obj.map(snakeToCamel);
   }
 
   return Object.keys(obj).reduce((acc: any, key: string) => {
-      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-      acc[camelKey] = snakeToCamel(obj[key]);
-      return acc;
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    acc[camelKey] = snakeToCamel(obj[key]);
+    return acc;
   }, {});
+};
+
+/**
+ * Add records to another records
+ * @param firstObject - The first records object.
+ * @param secondObject  _ the second records object.
+ */
+export const areObjectsEqual = (firstObject: Record<string, any>, secondObject: Record<string, any>): boolean => {
+  // Check if the number of keys are equal
+  const keys1 = Object.keys(firstObject);
+  const keys2 = Object.keys(secondObject);
+  if (keys1.length !== keys2.length) {
+      return false;
+  }
+
+  // Check if each key-value pair matches
+  for (const key of keys1) {
+      // Check if the key exists in both objects
+      if (!(key in secondObject)) {
+          return false;
+      }
+
+      // Check if the values are equal
+      const value1 = firstObject[key];
+      const value2 = secondObject[key];
+      if (value1 !== value2) {
+          // If the values are objects, recursively check them
+          if (typeof value1 === 'object' && typeof value2 === 'object') {
+              if (!areObjectsEqual(value1, value2)) {
+                  return false;
+              }
+          } else {
+              return false;
+          }
+      }
+  }
+
+  return true;
 }
