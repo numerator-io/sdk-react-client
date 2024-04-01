@@ -224,6 +224,11 @@ jobs:
           echo "GITHUB_COMMITS<<$EOF" >> "$GITHUB_ENV"
           echo $GITHUB_COMMITS | sed "s/\"/'/g" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
+          
+          RELEASE_NOTES=$(echo "${{ needs.release-info-extraction.outputs.release_notes }}" | while read line || [ -n "$line" ]; do echo -n "- $line \\n"; done)
+          echo "RELEASE_NOTES<<$EOF" >> "$GITHUB_ENV"
+          echo $RELEASE_NOTES | sed "s/\"/'/g" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Slack Notification
         id: slack
@@ -258,7 +263,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Release Notes:* ${{ needs.release-info-extraction.outputs.release_notes | replace('\n', '\\n') }}"
+                    "text": "*Release Notes:*\n```${{ env.RELEASE_NOTES }}```"
                   }
                 },
                 {
