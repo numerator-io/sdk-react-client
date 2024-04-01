@@ -258,7 +258,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Release Notes:* ${{ needs.release-info-extraction.outputs.release_notes }}"
+                    "text": "*Release Notes:* ${{ needs.release-info-extraction.outputs.release_notes | replace('\n', '\\n') }}"
                   }
                 },
                 {
