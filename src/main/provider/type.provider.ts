@@ -80,10 +80,11 @@ export interface NumeratorContextType {
   /**
    * Get feature flag value.
    * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of string value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+  getFeatureFlag(key: string, defaultVal: any, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
 
   /**
    * get default context of SDK.

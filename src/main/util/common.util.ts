@@ -59,7 +59,8 @@ export const snakeToCamel = (obj: any): any => {
  * @param firstObject - The first records object.
  * @param secondObject  _ the second records object.
  */
-export const areObjectsEqual = (firstObject: Record<string, any>, secondObject: Record<string, any>): boolean => {
+export const areObjectsEqual = (firstObject?: Record<string, any>, secondObject?: Record<string, any>): boolean => {
+  if(!firstObject || !secondObject) return false
   // Check if the number of keys are equal
   const keys1 = Object.keys(firstObject);
   const keys2 = Object.keys(secondObject);
