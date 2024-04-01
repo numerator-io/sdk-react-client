@@ -109,38 +109,38 @@ jobs:
           token: ${{ env.GITHUB_TOKEN }}
           ref: 'refs/tags/${{ needs.release-info-extraction.outputs.release_version }}'
 
-      - name: Append release notes to CHANGELOG.md and create release branch
-        env:
-          RELEASE_BRANCH: release/${{ needs.release-info-extraction.outputs.release_version }}
-          RELEASE_VERSION: ${{ needs.release-info-extraction.outputs.release_version }}
-        run: |
-          echo "Starting pre-publish steps"
-          git fetch --all
-          git config --global user.email "github-actions@c0x12c.com"
-          git config --global user.name "Github Actions"
+      # TODO: CHECK this step
+      # - name: Append release notes to CHANGELOG.md and create release branch
+      #   env:
+      #     RELEASE_BRANCH: release/${{ needs.release-info-extraction.outputs.release_version }}
+      #     RELEASE_VERSION: ${{ needs.release-info-extraction.outputs.release_version }}
+      #   run: |
+      #     echo "Starting pre-publish steps"
+      #     git fetch --all
+      #     git config --global user.email "github-actions@c0x12c.com"
+      #     git config --global user.name "Github Actions"
 
-          echo "Checking if branch $RELEASE_BRANCH exists."
-          if git rev-parse --verify $RELEASE_BRANCH >/dev/null 2>&1; then
-            echo "Branch $RELEASE_BRANCH already exists."
-          else
-            echo "Checking out branch $RELEASE_BRANCH"
-            git checkout -b $RELEASE_BRANCH
+      #     echo "Checking if branch $RELEASE_BRANCH exists."
+      #     if git rev-parse --verify $RELEASE_BRANCH >/dev/null 2>&1; then
+      #       echo "Branch $RELEASE_BRANCH already exists."
+      #     else
+      #       echo "Checking out branch $RELEASE_BRANCH"
+      #       git checkout -b $RELEASE_BRANCH
 
-            echo "Adding release notes to CHANGELOG.md"
-            if [ ! -f "CHANGELOG.md" ]; then
-              echo "# Changelog" >> CHANGELOG.md
-            fi
-            echo "" >> CHANGELOG.md
-            echo "## Release ${{ needs.release-info-extraction.outputs.release_version }}" >> CHANGELOG.md
-            echo "${{ needs.release-info-extraction.outputs.release_notes }}" >> CHANGELOG.md
+      #       echo "Adding release notes to CHANGELOG.md"
+      #       if [ ! -f "CHANGELOG.md" ]; then
+      #         echo "# Changelog" >> CHANGELOG.md
+      #       fi
+      #       echo "" >> CHANGELOG.md
+      #       echo "## Release ${{ needs.release-info-extraction.outputs.release_version }}" >> CHANGELOG.md
+      #       echo "${{ needs.release-info-extraction.outputs.release_notes }}" >> CHANGELOG.md
 
-            echo "Committing changes"
-            git add CHANGELOG.md
-            git commit -m "Add release notes for $RELEASE_VERSION"
+      #       echo "Committing changes"
+      #       git commit -am "Add release notes for $RELEASE_VERSION"
 
-            echo "Pushing changes to $RELEASE_BRANCH"
-            git push origin $RELEASE_BRANCH
-          fi
+      #       echo "Pushing changes to $RELEASE_BRANCH"
+      #       git push origin $RELEASE_BRANCH
+      #     fi
 
       # TODO: CHECK this step
       # - name: Create Pull Request
