@@ -4,25 +4,43 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. 1.0.0)'
+        required: true
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TAG: ${{ github.event.inputs.tag || github.ref }}
 
 jobs:
   tagged-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create release and generate changelog
-        uses: softprops/action-gh-release@v2
-        
-        uses: ncipollo/release-action@v1.14.0
+      - name: "Create release"
+        uses: "actions/github-script@v7"
         with:
-          artifacts: "*.zip, *.tar.gz"
-          generateReleaseNotes: true
-          name: "Release v${{ github.ref }}"
-          prerelease: true
-          tag: ${{ github.ref }}
-          token: ${{ env.GITHUB_TOKEN }}
+          github-token: "${{ env.GITHUB_TOKEN }}"
+          script: |
+            try {
+              const response = await github.rest.repos.createRelease({
+                draft: false,
+                prerelease: false,
+                generate_release_notes: true,
+                name: `Release v${process.env.TAG}`,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: process.env.TAG,
+              });
+
+              core.exportVariable('RELEASE_ID', response.data.id);
+              core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);
+            } catch (error) {
+              core.setFailed(error.message);
+            }

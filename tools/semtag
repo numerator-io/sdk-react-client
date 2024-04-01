@@ -3,7 +3,7 @@
 PROG=semtag
 PROG_VERSION="0.1.0"
 
-SEMVER_REGEX="^?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$"
+SEMVER_REGEX="^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$"
 IDENTIFIER_REGEX="^\-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*$"
 NUMERIC_REGEX='^[0-9]+$'
 
@@ -401,7 +401,7 @@ function bump_version {
     explode_identifier ${__explodedlast[3]} __idlast
 
     # We get the last, given the desired id based on the scope
-    __candidatefromlast="${__explodedlast[0]}.${__explodedlast[1]}.${__explodedlast[2]}"
+    __candidatefromlast="v${__explodedlast[0]}.${__explodedlast[1]}.${__explodedlast[2]}"
     if [[ -n "$identifier" ]]; then
       local __nextid="$identifier.1"
       if [ "$identifier" == "${__idlast[0]}" ]; then
