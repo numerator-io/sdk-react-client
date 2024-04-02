@@ -1,8 +1,22 @@
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import dts from 'rollup-plugin-dts';
 import json from '@rollup/plugin-json';
 import typescript from 'rollup-plugin-typescript2';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
 
-const plugins = [typescript()];
+const plugins = [
+  peerDepsExternal(),
+  typescript({
+    tsconfig: './tsconfig.json',
+    useTsconfigDeclarationDir: true,
+  }),
+  commonjs(),
+  nodeResolve(),
+  json(),
+  terser()
+];
 const external = /node_modules/;
 
 export default [

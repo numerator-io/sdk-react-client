@@ -26,13 +26,11 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
 
   const flagValueByKey = async (key: string, context: Record<string, any> | undefined) => {
-    const result = await numeratorClient.getFeatureFlagByKey({ key, context });
-    return result;
+    return await numeratorClient.getFeatureFlagByKey({ key, context });
   };
 
   const allFlags = async (): Promise<FeatureFlagConfig[]> => {
-    const allFlagsConfig = await numeratorClient.allFeatureFlagsConfig();
-    return allFlagsConfig;
+    return await numeratorClient.allFeatureFlagsConfig();
   };
 
   const booleanFlagVariation = async (
@@ -50,6 +48,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
         reason: {},
       };
     } catch (e) {
+      console.warn('Error fetching flag boolean variation:', e);
       return {
         key: key,
         value: defaultVal,
@@ -73,6 +72,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
         reason: {},
       };
     } catch (e) {
+      console.warn('Error fetching flag number variation:', e);
       return {
         key: key,
         value: defaultVal,
@@ -96,6 +96,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
         reason: {},
       };
     } catch (e) {
+      console.warn('Error fetching flag string variation:', e);
       return {
         key: key,
         value: defaultVal,
