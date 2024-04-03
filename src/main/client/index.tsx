@@ -129,7 +129,7 @@ export class NumeratorClient {
   ): Promise<FeatureFlagPollingResponse> {
     try {
       const headers = !!eTag ? { 'If-None-Match': eTag } : {};
-      const response = await this.apiClient.request<AxiosResponse<{ flags: FlagCollection[] }>>({
+      const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
         method: 'POST',
         headers: headers,
         endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
@@ -145,7 +145,7 @@ export class NumeratorClient {
         return this.handleFeatureFlagNotFound();
       }
 
-      return { flags: response.data.data.flags, etag: response.data.headers['eTag'] };
+      return { flags: response.data.flags, etag: response.headers['eTag'] };
     } catch (error: any) {
       console.warn('Error fetching featureFlagCollectionPolling due to: [', error, ']');
       return Promise.reject(error);

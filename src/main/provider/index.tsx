@@ -24,11 +24,11 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
 export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext }) => {
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
+  const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({})
   const [flags, setFlags] = useState<Record<string, any>>({});
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
-
-  const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({});
-  const [currentEtag, setCurrentEtag] = useState<string>();
+  const [currentEtag, setCurrentEtag] = useState<string>()
+  const [activeTimeInterval, setActiveTimeInterval] = useState(true)
 
   const version = () => {
     return pjson.version
@@ -169,11 +169,27 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const { getDefaultContext, clearDefaultContext, addDefaultContextValue, removeDefaultContextValue } =
     useDefaultContext(defaultContextValues, setDefaultContextValues);
     
+  const startPolling = () => {
+    setActiveTimeInterval(true)
+  }
+
+  const stopPolling = () => {
+    setActiveTimeInterval(false)
+    setCacheFlags({})
+  }
+
   useEffect(() => {
-    const timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL)
+    let timeInterval: any;
+
+    if(activeTimeInterval) {
+      timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL)
+    } else {
+      clearInterval(timeInterval)
+    }
 
     return () => clearInterval(timeInterval)
-  }, [])
+
+  }, [activeTimeInterval])
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
@@ -189,6 +205,8 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     clearDefaultContext,
     addDefaultContextValue,
     removeDefaultContextValue,
+    startPolling,
+    stopPolling,
     fetchPollingFeatureFlag,
   };
 

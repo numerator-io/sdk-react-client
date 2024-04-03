@@ -111,6 +111,16 @@ export interface NumeratorContextType {
 
   
   /**
+   * Start the polling feature flag
+   */
+  startPolling():void
+
+  /**
+   * Stop the polling feature flag
+   */
+    stopPolling():void
+
+  /**
    * Get polling flag value
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param eTag - The tag to check if value update or not
