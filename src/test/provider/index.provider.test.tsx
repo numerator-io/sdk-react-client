@@ -691,4 +691,73 @@ describe('NumeratorProvider', () => {
     });
 
   });
+
+  it('stop polling - return by detail - not match key', async () => {
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagColections = {
+      flags: [
+        {
+          id: '1',
+          key: 'feature1',
+          value: { stringValue: 'test value' },
+          valueType: FlagValueTypeEnum.STRING,
+          createdAt: '2024-04-01',
+        },
+      ],
+
+      eTag: 'someEtag',
+    };
+        // Mock featureFlags response from NumeratorClient
+        const mockFeatureFlagValue: FlagVariationValue = {
+          key: 'feature1',
+          status: FlagStatusEnum.ON,
+          value: { stringValue: 'test value by key' },
+          valueType: FlagValueTypeEnum.STRING,
+        };
+    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
+    jest.useFakeTimers();
+    // Render NumeratorProvider with a component that consumes the context
+    const ConsumerComponent = () => {
+      const { getFeatureFlag, stopPolling } = useNumeratorContext();
+      const [flagValue, setFlagValue] = useState<any>();
+
+      const getValue = async () => {
+        stopPolling()
+        const res = await getFeatureFlag('feature2', 'demo');
+        setFlagValue(res);
+      };
+
+      return (
+        <div>
+          <h1>Feature Flags:</h1>
+          <button key="btn" data-testid="btn" onClick={getValue}>
+            btn
+          </button>
+          <p key="demo" data-testid="demo">
+            {String(flagValue)}
+          </p>
+        </div>
+      );
+    };
+
+    render(
+      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }}>
+        <ConsumerComponent />
+      </NumeratorProvider>,
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(70000);
+    });
+
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      const btn = screen.getByTestId('btn');
+      fireEvent.click(btn);
+      expect(screen.getByTestId('demo').textContent).toBe('demo');
+    });
+
+  });
 });
