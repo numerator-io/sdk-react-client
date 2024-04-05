@@ -20,12 +20,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout code & push release branch
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ env.GITHUB_TOKEN }}
-          ref: ${{ env.TAG }}
+          ref: 'refs/tags/${{ env.TAG }}'
+
+      - name: Push release branch
         run: |
           git config --global user.email "github-actions@numerator.io"
           git config --global user.name "Github Actions"
