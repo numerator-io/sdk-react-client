@@ -11,7 +11,7 @@ on:
         required: true
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PAT }}
   TAG: ${{ github.event.inputs.tag || github.ref }}
 
 jobs:
@@ -20,10 +20,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout code
+      - name: Checkout code & push release branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ env.GITHUB_TOKEN }}
+          ref: ${{ env.TAG }}
+        run: |
+          git config --global user.email "github-actions@numerator.io"
+          git config --global user.name "Github Actions"
+          git checkout -b release/${{ env.TAG }}
+          git push origin release/${{ env.TAG }}
 
-      - name: "Create release"
+      - name: Create release
         uses: "actions/github-script@v7"
         with:
           github-token: "${{ env.GITHUB_TOKEN }}"

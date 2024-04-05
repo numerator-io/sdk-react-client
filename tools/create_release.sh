@@ -10,7 +10,8 @@ git fetch origin --tags
 RELEASE_VERSION="$($SEMTAG final -s $ACTION -o)"
 
 if [ "$V_PREFIX" = false ]; then
-  RELEASE_VERSION=$(echo $RELEASE_VERSION | sed 's/v//g')
+  # shellcheck disable=SC2001
+  RELEASE_VERSION=$(echo "$RELEASE_VERSION" | sed 's/v//g')
 fi
 
 echo "Next release version: $RELEASE_VERSION"
