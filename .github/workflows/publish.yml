@@ -13,7 +13,7 @@ on:
 env:
   GITHUB_REPOSITORY: ${{ github.repository }}
   GITHUB_OWNER: ${{ github.repository_owner }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PAT }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
@@ -95,76 +95,8 @@ jobs:
             core.setOutput('release_exists', releaseVersionExists.exists);
             core.setOutput('release_notes', releaseVersionExists.releaseNotes);
 
-  pre-publish:
-    needs: release-info-extraction
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 3
-          token: ${{ env.GITHUB_TOKEN }}
-          ref: 'refs/tags/${{ needs.release-info-extraction.outputs.release_version }}'
-
-      # TODO: CHECK this step
-      # - name: Append release notes to CHANGELOG.md and create release branch
-      #   env:
-      #     RELEASE_BRANCH: release/${{ needs.release-info-extraction.outputs.release_version }}
-      #     RELEASE_VERSION: ${{ needs.release-info-extraction.outputs.release_version }}
-      #   run: |
-      #     echo "Starting pre-publish steps"
-      #     git fetch --all
-      #     git config --global user.email "github-actions@numerator.io"
-      #     git config --global user.name "Github Actions"
-
-      #     echo "Checking if branch $RELEASE_BRANCH exists."
-      #     if git rev-parse --verify $RELEASE_BRANCH >/dev/null 2>&1; then
-      #       echo "Branch $RELEASE_BRANCH already exists."
-      #     else
-      #       echo "Checking out branch $RELEASE_BRANCH"
-      #       git checkout -b $RELEASE_BRANCH
-
-      #       echo "Adding release notes to CHANGELOG.md"
-      #       if [ ! -f "CHANGELOG.md" ]; then
-      #         echo "# Changelog" >> CHANGELOG.md
-      #       fi
-      #       echo "" >> CHANGELOG.md
-      #       echo "## Release ${{ needs.release-info-extraction.outputs.release_version }}" >> CHANGELOG.md
-      #       echo "${{ needs.release-info-extraction.outputs.release_notes }}" >> CHANGELOG.md
-
-      #       echo "Committing changes"
-      #       git commit -am "Add release notes for $RELEASE_VERSION"
-
-      #       echo "Pushing changes to $RELEASE_BRANCH"
-      #       git push origin $RELEASE_BRANCH
-      #     fi
-
-      # TODO: CHECK this step
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v6
-      #   env:
-      #     RELEASE_BRANCH: release/${{ needs.release-info-extraction.outputs.release_version }}
-      #     RELEASE_VERSION: ${{ needs.release-info-extraction.outputs.release_version }}
-      #     PR_REVIEWERS: spartan-thangtran
-      #   with:
-      #     token: ${{ env.GITHUB_TOKEN }}
-      #     branch: ${{ env.RELEASE_BRANCH }}
-      #     base: tags/${{ env.RELEASE_VERSION }}
-      #     commit-message: Add release notes for ${{ env.RELEASE_VERSION }}
-      #     assignees: ${{ github.actor }}
-      #     title: Release ${{ env.RELEASE_VERSION }}
-      #     body: |
-      #       Hi!
-      #       This PR was created in response workflow running.
-      #       I've updated create the release branch[release/${{ env.RELEASE_VERSION }}] and added release notes to CHANGELOG.md.
-
   publish:
-    needs:
-      - pre-publish
-      - release-info-extraction
+    needs: release-info-extraction
     runs-on: ubuntu-latest
     strategy:
       matrix:
