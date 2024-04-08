@@ -2,14 +2,31 @@ import { ReactNode } from 'react';
 import {
   ConfigClient,
   FeatureFlagConfig,
-  FlagEvaluationDetail
+  FlagEvaluationDetail,
+  FlagVariationValue
 } from '../client/type.client';
 
 export interface NumeratorContextType {
+
+  /**
+   * Return version of the Numerator SDK
+   */
+  version(): String
+
   /**
    * Get all feature flags
    */
-  allFlags(): Promise<FeatureFlagConfig[]>;
+  featureFlags(): Promise<FeatureFlagConfig[]>;
+
+  /**
+   * Get Variation of the feature flag.
+   * @param key - The flag key of the feature flag to fetch value for.
+   * @param defaultVal - Default value of boolean value if not get flag variation
+   * @param context - Optional context data to be passed to the NumeratorClient.
+   * @param useDefaultContext - Optional check using default context or not
+   */
+  flagValueByKey(key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue>
+
 
   /**
    * Retrieves the boolean object
@@ -18,7 +35,7 @@ export interface NumeratorContextType {
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  booleanFlagVariation(
+  booleanFlagVariationDetail(
     key: string,
     defaultVal: boolean,
     context?: Record<string, any> | undefined,
@@ -32,7 +49,7 @@ export interface NumeratorContextType {
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  numberFlagVariation(
+  numberFlagVariationDetail(
     key: string,
     defaultVal: number,
     context?: Record<string, any> | undefined,
@@ -40,13 +57,13 @@ export interface NumeratorContextType {
   ): Promise<FlagEvaluationDetail<number>>;
 
   /**
-   * Retrieves the string object
+   * Retrieves the string object.
    * @param key - The flag key of the feature flag to fetch value for.
    * @param defaultVal - Default value of string value if not get flag variation
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  stringFlagVariation(
+  stringFlagVariationDetail(
     key: string,
     defaultVal: string,
     context?: Record<string, any> | undefined,
@@ -54,19 +71,43 @@ export interface NumeratorContextType {
   ): Promise<FlagEvaluationDetail<string>>;
 
   /**
-   * Initialize new feature flag
+   * Initialize new feature flag.
    * @param key - The flag key of the feature flag to fetch value for.
    * @param defaultVal - Default value of string value if not get flag variation
    */
   initFeatureFlag(key: string, defaultVal: any): void;
 
   /**
-   * Get feature flag value
+   * Get feature flag value.
    * @param key - The flag key of the feature flag to fetch value for.
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
   getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+
+  /**
+   * get default context of SDK.
+   */
+  getDefaultContext() : Record<string, any>
+
+  /**
+   * Clear all values in default context.
+   */
+  clearDefaultContext(): void
+
+  /**
+   * Add more record value in default context.
+   * @param key - The key name of added record 
+   * @param value - the value of added record
+   */
+  addDefaultContextValue(key:string, value: any): void
+
+  /**
+   * removerecord value in default context.
+   * @param key - The key name of added record 
+   */
+  removeDefaultContextValue(key:string): void
+
 }
 
 export interface NumeratorProviderProps {

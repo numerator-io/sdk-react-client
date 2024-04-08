@@ -1,13 +1,12 @@
 import React, { useContext, useState } from 'react';
 
 import NumeratorClient from '../client';
-import {
-  ConfigClient,
-  FeatureFlagConfig,
-  FlagEvaluationDetail
-} from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
 import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
+import { useDefaultContext } from './useDefaultContext';
+
+const pjson = require('../../../package.json')
 
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
@@ -22,20 +21,24 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
 export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext }) => {
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
+  const [flags, setFlags] = useState<Record<string, any>>({});
+  const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
 
-  const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
+  const version = () => {
+    return pjson.version
+  }
 
-  const flagValueByKey = async (key: string, context: Record<string, any> | undefined) => {
+  const flagValueByKey = async (key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue> => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
     return result;
   };
 
-  const allFlags = async (): Promise<FeatureFlagConfig[]> => {
+  const featureFlags = async (): Promise<FeatureFlagConfig[]> => {
     const allFlagsConfig = await numeratorClient.allFeatureFlagsConfig();
     return allFlagsConfig;
   };
 
-  const booleanFlagVariation = async (
+  const booleanFlagVariationDetail = async (
     key: string,
     defaultVal: boolean,
     context: Record<string, any> | undefined = undefined,
@@ -58,7 +61,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     }
   };
 
-  const numberFlagVariation = async (
+  const numberFlagVariationDetail = async (
     key: string,
     defaultVal: number,
     context: Record<string, any> | undefined = undefined,
@@ -81,7 +84,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     }
   };
 
-  const stringFlagVariation = async (
+  const stringFlagVariationDetail = async (
     key: string,
     defaultVal: string,
     context: Record<string, any> | undefined = undefined,
@@ -105,8 +108,8 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   };
 
   const initFeatureFlag = (key: string, defaultVal: any) => {
-    featureFlags[key] = defaultVal
-    setFeatureFlags(featureFlags);
+    flags[key] = defaultVal;
+    setFlags(flags);
   };
 
   const getFeatureFlag = async (
@@ -114,29 +117,38 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
     context: Record<string, any> | undefined = undefined,
     useDefaultContext: boolean = true,
   ): Promise<any> => {
-    const defaultVal = featureFlags[key];
+    const defaultVal = flags[key];
     switch (typeof defaultVal) {
       case 'boolean':
-        const resBoolean = await booleanFlagVariation(key, defaultVal, context, useDefaultContext);
+        const resBoolean = await booleanFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resBoolean.value as boolean;
       case 'number':
-        const resNumber = await numberFlagVariation(key, defaultVal, context, useDefaultContext);
+        const resNumber = await numberFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resNumber.value as number;
 
       case 'string':
-        const resString = await stringFlagVariation(key, defaultVal, context, useDefaultContext);
+        const resString = await stringFlagVariationDetail(key, defaultVal, context, useDefaultContext);
         return resString.value as string;
     }
   };
 
+  const { getDefaultContext, clearDefaultContext, addDefaultContextValue, removeDefaultContextValue } =
+    useDefaultContext(defaultContextValues, setDefaultContextValues);
+
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
-    allFlags,
-    booleanFlagVariation,
-    numberFlagVariation,
-    stringFlagVariation,
+    version,
+    featureFlags,
+    flagValueByKey,
+    booleanFlagVariationDetail,
+    numberFlagVariationDetail,
+    stringFlagVariationDetail,
     initFeatureFlag,
     getFeatureFlag,
+    getDefaultContext,
+    clearDefaultContext,
+    addDefaultContextValue,
+    removeDefaultContextValue,
   };
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;

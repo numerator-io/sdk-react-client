@@ -58,12 +58,12 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { allFlags } = useNumeratorContext();
+      const { featureFlags } = useNumeratorContext();
       const [flags, setFlags] = useState<FeatureFlagConfig[]>()
 
       useEffect(() => {
           const fetchData = async () => {
-            let res = await  allFlags()
+            let res = await  featureFlags()
             setFlags(res)
           }
           fetchData()
@@ -109,12 +109,12 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { booleanFlagVariation } = useNumeratorContext();
+      const { booleanFlagVariationDetail } = useNumeratorContext();
       const [flag, setFlag] = useState<FlagEvaluationDetail<boolean>>()
 
       useEffect(() => {
           const fetchData = async () => {
-            let res = await  booleanFlagVariation('feature1', false, {platform: 'android'})
+            let res = await  booleanFlagVariationDetail('feature1', false, {platform: 'android'})
             setFlag(res)
           }
           fetchData()
@@ -157,12 +157,12 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { stringFlagVariation } = useNumeratorContext();
+      const { stringFlagVariationDetail } = useNumeratorContext();
       const [flag, setFlag] = useState<FlagEvaluationDetail<string>>()
 
       useEffect(() => {
           const fetchData = async () => {
-            let res = await  stringFlagVariation('feature1', 'demo', {platform: 'android'})
+            let res = await  stringFlagVariationDetail('feature1', 'demo', {platform: 'android'})
             setFlag(res)
           }
           fetchData()
@@ -205,7 +205,7 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { numberFlagVariation } = useNumeratorContext();
+      const { numberFlagVariationDetail: numberFlagVariation } = useNumeratorContext();
       const [flag, setFlag] = useState<FlagEvaluationDetail<number>>()
 
       useEffect(() => {
@@ -254,12 +254,12 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { numberFlagVariation } = useNumeratorContext();
+      const { numberFlagVariationDetail } = useNumeratorContext();
       const [flag, setFlag] = useState<FlagEvaluationDetail<number>>()
 
       useEffect(() => {
           const fetchData = async () => {
-            let res = await  numberFlagVariation('feature1', 1.23, {platform: 'android'})
+            let res = await  numberFlagVariationDetail('feature1', 1.23, {platform: 'android'})
             setFlag(res)
           }
           fetchData()
