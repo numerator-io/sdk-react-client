@@ -25,7 +25,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ env.GITHUB_TOKEN }}
-          ref: 'refs/tags/${{ env.TAG }}'
 
       - name: Push release branch
         run: |
