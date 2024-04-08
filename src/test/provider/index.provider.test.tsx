@@ -407,7 +407,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -475,7 +475,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -543,7 +543,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -611,7 +611,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -679,7 +679,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -748,7 +748,7 @@ describe('NumeratorProvider', () => {
     );
 
     act(() => {
-      jest.advanceTimersByTime(70000);
+      jest.advanceTimersByTime(40000);
     });
 
     // Wait for promises to resolve
@@ -823,7 +823,7 @@ describe('NumeratorProvider', () => {
 
 
     act(() => {
-      jest.advanceTimersByTime(90000);
+      jest.advanceTimersByTime(50000);
     });
 
     // Wait for promises to resolve

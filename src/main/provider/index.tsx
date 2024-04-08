@@ -9,7 +9,7 @@ import { useDefaultContext } from './useDefaultContext';
 
 const pjson = require('../../../package.json')
 
-const POLLING_INTERVAL = 60000; // 1 minute
+const POLLING_INTERVAL = 30000; // 30 seconds
 
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
