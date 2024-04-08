@@ -21,14 +21,14 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
 };
 
 // Create a provider component
-export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext }) => {
+export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, configClient, defaultContext, loadPolling = true }) => {
   // Initialize the SDK client
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
   const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({})
   const [flags, setFlags] = useState<Record<string, any>>({});
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
   const [currentEtag, setCurrentEtag] = useState<string>()
-  const [activeTimeInterval, setActiveTimeInterval] = useState(true)
+  const [activeTimeInterval, setActiveTimeInterval] = useState(loadPolling)
 
   const version = () => {
     return pjson.version

@@ -1,17 +1,11 @@
 import { ReactNode } from 'react';
-import {
-  ConfigClient,
-  FeatureFlagConfig,
-  FlagEvaluationDetail,
-  FlagVariationValue
-} from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
 
 export interface NumeratorContextType {
-
   /**
    * Return version of the Numerator SDK
    */
-  version(): String
+  version(): String;
 
   /**
    * Get all feature flags
@@ -25,8 +19,7 @@ export interface NumeratorContextType {
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  flagValueByKey(key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue>
-
+  flagValueByKey(key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue>;
 
   /**
    * Retrieves the boolean object
@@ -84,41 +77,45 @@ export interface NumeratorContextType {
    * @param context - Optional context data to be passed to the NumeratorClient.
    * @param useDefaultContext - Optional check using default context or not
    */
-  getFeatureFlag(key: string, defaultVal: any, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+  getFeatureFlag(
+    key: string,
+    defaultVal: any,
+    context?: Record<string, any> | undefined,
+    useDefaultContext?: boolean,
+  ): Promise<any>;
 
   /**
    * get default context of SDK.
    */
-  getDefaultContext() : Record<string, any>
+  getDefaultContext(): Record<string, any>;
 
   /**
    * Clear all values in default context.
    */
-  clearDefaultContext(): void
+  clearDefaultContext(): void;
 
   /**
    * Add more record value in default context.
-   * @param key - The key name of added record 
+   * @param key - The key name of added record
    * @param value - the value of added record
    */
-  addDefaultContextValue(key:string, value: any): void
+  addDefaultContextValue(key: string, value: any): void;
 
   /**
    * removerecord value in default context.
-   * @param key - The key name of added record 
+   * @param key - The key name of added record
    */
-  removeDefaultContextValue(key:string): void
+  removeDefaultContextValue(key: string): void;
 
-  
   /**
    * Start the polling feature flag
    */
-  startPolling():void
+  startPolling(): void;
 
   /**
    * Stop the polling feature flag
    */
-    stopPolling():void
+  stopPolling(): void;
 
   /**
    * Get polling flag value
@@ -140,4 +137,8 @@ export interface NumeratorProviderProps {
    * The default context client send to NumeratorProvider
    */
   defaultContext: Record<string, any>;
+  /**
+   * Start to load polling
+   */
+  loadPolling?: boolean;
 }
