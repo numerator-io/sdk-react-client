@@ -26,7 +26,7 @@ export class ApiClient implements ApiClientInterface {
 
     try {
       const response = await axios.request<T>(config);
-      return { data: snakeToCamel(response.data), error: undefined };
+      return { data: snakeToCamel(response.data), error: undefined, headers: response.headers };
     } catch (error: Error | any) {
       const axiosResponse = error.response;
       if (axiosResponse) {

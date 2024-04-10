@@ -1,5 +1,7 @@
+import { AxiosError, AxiosResponse } from 'axios';
 import { ApiClient } from './api.client';
 import {
+  END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
   END_POINT_FEATURE_FLAG_CONFIG_BY_KEY,
   END_POINT_FEATURE_FLAG_CONFIG_LISTING,
   END_POINT_FEATURE_FLAG_VALUE_BY_KEY,
@@ -10,8 +12,10 @@ import {
   FeatureFlagConfig,
   FeatureFlagConfigListingRequest,
   FeatureFlagConfigListingResponse,
+  FeatureFlagPollingResponse,
   FeatureFlagValueByKeyRequest,
-  FlagVariationValue
+  FlagCollection,
+  FlagVariationValue,
 } from './type.client';
 
 export class NumeratorClient {
@@ -112,9 +116,38 @@ export class NumeratorClient {
         return this.handleFeatureFlagNotFound();
       }
 
-     return response.data
+      return response.data;
     } catch (error: any) {
       console.warn('Error fetching featureFlagValueByKey due to: [', error, ']');
+      return Promise.reject(error);
+    }
+  }
+
+  async fetchPoolingFlag(
+    context: Record<string, any>,
+    eTag?: string | undefined,
+  ): Promise<FeatureFlagPollingResponse> {
+    try {
+      const headers = !!eTag ? { 'If-None-Match': eTag } : {};
+      const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
+        method: 'POST',
+        headers: headers,
+        endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
+        data: { context },
+      });
+
+      if (response.error) {
+        console.warn('Error fetching featureFlagCollectionPolling due to: [', response.error, ']');
+        return Promise.reject(response.error as ErrorResponse);
+      }
+
+      if (!response.data) {
+        return this.handleFeatureFlagNotFound();
+      }
+
+      return { flags: response.data.flags, etag: response.headers['eTag'] };
+    } catch (error: any) {
+      console.warn('Error fetching featureFlagCollectionPolling due to: [', error, ']');
       return Promise.reject(error);
     }
   }

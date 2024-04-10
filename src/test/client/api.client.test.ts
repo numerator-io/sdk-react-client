@@ -41,7 +41,7 @@ describe('ApiClient', () => {
     const result = await apiClient.request<typeof mockResponseData>(apiRequestOptions);
 
     // Assert
-    expect(result).toEqual({ data: mockResponseData, error: undefined });
+    expect(result).toEqual({ data: mockResponseData, error: undefined, headers: {} });
   });
 
   it('should handle request error', async () => {
