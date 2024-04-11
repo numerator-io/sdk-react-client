@@ -13,6 +13,7 @@ interface ErrorResponse {
 interface ApiResponse<T> {
     data?: T;
     error?: ErrorResponse | any;
+    headers?: any;
 }
 interface ApiRequestOptions extends AxiosRequestConfig {
     endpoint: string;
@@ -41,6 +42,10 @@ interface FeatureFlagValueByKeyRequest {
 interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFlagConfig> {
     count: number;
     data: FeatureFlagConfig[];
+}
+interface FeatureFlagPollingResponse {
+    flags: FlagCollection[];
+    etag: string;
 }
 type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';
 declare enum FlagStatusEnum {
@@ -83,6 +88,13 @@ interface FlagEvaluationDetail<T> {
     value: T;
     reason: Record<string, any> | null;
 }
+interface FlagCollection {
+    id: string;
+    key: string;
+    value: VariationValue;
+    valueType: FlagValueTypeEnum;
+    createdAt: string;
+}
 
 declare class NumeratorClient {
     private apiClient;
@@ -92,13 +104,10 @@ declare class NumeratorClient {
     allFeatureFlagsConfig(): Promise<FeatureFlagConfig[]>;
     featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig>;
     getFeatureFlagByKey<T>(request: FeatureFlagValueByKeyRequest): Promise<FlagVariationValue>;
+    fetchPoolingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse>;
 }
 
 interface NumeratorContextType {
-    /**
-     * Return version of the Numerator SDK
-     */
-    version(): String;
     /**
      * Get all feature flags
      */
@@ -144,10 +153,11 @@ interface NumeratorContextType {
     /**
      * Get feature flag value.
      * @param key - The flag key of the feature flag to fetch value for.
+     * @param defaultVal - Default value of string value if not get flag variation
      * @param context - Optional context data to be passed to the NumeratorClient.
      * @param useDefaultContext - Optional check using default context or not
      */
-    getFeatureFlag(key: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+    getFeatureFlag(key: string, defaultVal: any, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
     /**
      * get default context of SDK.
      */
@@ -167,6 +177,20 @@ interface NumeratorContextType {
      * @param key - The key name of added record
      */
     removeDefaultContextValue(key: string): void;
+    /**
+     * Start the polling feature flag
+     */
+    startPolling(): void;
+    /**
+     * Stop the polling feature flag
+     */
+    stopPolling(): void;
+    /**
+     * Get polling flag value
+     * @param context - Optional context data to be passed to the NumeratorClient.
+     * @param eTag - The tag to check if value update or not
+     */
+    fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
 }
 interface NumeratorProviderProps {
     children: ReactNode;
@@ -178,9 +202,13 @@ interface NumeratorProviderProps {
      * The default context client send to NumeratorProvider
      */
     defaultContext: Record<string, any>;
+    /**
+     * Start to load polling
+     */
+    loadPolling?: boolean;
 }
 
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
 declare const useNumeratorContext: () => NumeratorContextType;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagValueByKeyRequest, type FlagEvaluationDetail, FlagStatusEnum, FlagValueTypeEnum, type FlagVariationValue, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, useNumeratorContext };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, FlagValueTypeEnum, type FlagVariationValue, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, useNumeratorContext };
