@@ -1,4 +1,3 @@
-import { AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
 
 // --- Types for ConfigClient --- //
 export type ConfigClient = {
@@ -19,8 +18,12 @@ export interface ApiResponse<T> {
   headers?: any
 }
 
-export interface ApiRequestOptions extends AxiosRequestConfig {
+export interface ApiRequestOptions {
   endpoint: string;
+  method: string;
+  headers?: Record<string, any>;
+  data?: Record<string, any>;
+
 }
 
 export interface ApiClientInterface {
