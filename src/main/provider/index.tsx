@@ -7,7 +7,6 @@ import { NumeratorContext } from './context.provider';
 import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { useDefaultContext } from './useDefaultContext';
 
-const pjson = require('../../../package.json')
 
 const POLLING_INTERVAL = 30000; // 30 seconds
 
@@ -30,9 +29,6 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
   const [currentEtag, setCurrentEtag] = useState<string>()
   const [activeTimeInterval, setActiveTimeInterval] = useState(loadPolling)
 
-  const version = () => {
-    return pjson.version
-  }
 
   const fetchPollingFeatureFlag = async () => {
     const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
@@ -193,7 +189,6 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({ children, 
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = {
-    version,
     featureFlags,
     flagValueByKey,
     booleanFlagVariationDetail,
