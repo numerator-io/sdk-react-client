@@ -2,11 +2,7 @@ import { ReactNode } from 'react';
 import { ConfigClient, FeatureFlagConfig, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
 
 export interface NumeratorContextType {
-  /**
-   * Return version of the Numerator SDK
-   */
-  version(): String;
-
+  
   /**
    * Get all feature flags
    */
