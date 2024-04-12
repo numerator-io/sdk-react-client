@@ -33,6 +33,7 @@ describe('ApiClient', () => {
     mockFetch.mockResolvedValueOnce({
       json: () => Promise.resolve({}),
       headers: new Headers(),
+      ok: true
     });
 
     const apiRequestOptions: ApiRequestOptions = {

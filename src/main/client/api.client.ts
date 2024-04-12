@@ -26,8 +26,12 @@ export class ApiClient {
         headers,
         body: JSON.stringify(data),
       });
-      const resData = await response.json()
-      return { data: snakeToCamel(resData), error: undefined, headers: response.headers };
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const jsonData = await response.json()
+      return { data: snakeToCamel(jsonData), error: undefined, headers: response.headers };
     } catch (error: Error | any) {
       return { data: undefined, error };
     }
