@@ -1,8 +1,7 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { ApiClientInterface, ApiRequestOptions, ApiResponse, ConfigClient, ErrorResponse } from './type.client';
 import { snakeToCamel } from '../util';
+import { ApiRequestOptions, ApiResponse, ConfigClient } from './type.client';
 
-export class ApiClient implements ApiClientInterface {
+export class ApiClient {
   readonly apiKey: string;
   readonly baseUrl: string;
   static readonly API_KEY_HEADER = 'X-NUM-API-KEY';
@@ -13,36 +12,28 @@ export class ApiClient implements ApiClientInterface {
   }
 
   async request<T>(apiRequestOptions: ApiRequestOptions): Promise<ApiResponse<T>> {
-    const url = `${this.baseUrl}/${apiRequestOptions.endpoint}`;
+    const { method, endpoint, data, headers: headerRequest } = apiRequestOptions
+    const url = `${this.baseUrl}/${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
       [ApiClient.API_KEY_HEADER]: this.apiKey,
-    };
-    const config: AxiosRequestConfig = {
-      url,
-      headers,
-      ...apiRequestOptions,
+      ...headerRequest
     };
 
     try {
-      const response = await axios.request<T>(config);
-      return { data: snakeToCamel(response.data), error: undefined, headers: response.headers };
-    } catch (error: Error | any) {
-      const axiosResponse = error.response;
-      if (axiosResponse) {
-        const errorResponse: ErrorResponse = {
-          message: axiosResponse.data?.message || 'Unknown Error',
-          errorCode: axiosResponse.data?.error_code || 'unknown_error',
-          errorStatus: axiosResponse.status,
-        };
-        return { data: undefined, error: errorResponse };
-      } else {
-        console.warn('AxiosError:', error.message);
-        return {
-          data: undefined,
-          error: { message: 'Unknown Error', error_code: 'unknown_error', http_status: 500 },
-        };
+      const response = await fetch(url, {
+        method,
+        headers,
+        body: JSON.stringify(data),
+      });
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      const jsonData = await response.json()
+      return { data: snakeToCamel(jsonData), error: undefined, headers: response.headers };
+    } catch (error: Error | any) {
+      return { data: undefined, error };
     }
   }
 }

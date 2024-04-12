@@ -1,4 +1,3 @@
-import { AxiosRequestConfig } from 'axios';
 import React, { ReactNode } from 'react';
 
 type ConfigClient = {
@@ -15,8 +14,11 @@ interface ApiResponse<T> {
     error?: ErrorResponse | any;
     headers?: any;
 }
-interface ApiRequestOptions extends AxiosRequestConfig {
+interface ApiRequestOptions {
     endpoint: string;
+    method: string;
+    headers?: Record<string, any>;
+    data?: Record<string, any>;
 }
 interface ApiClientInterface {
     apiKey: string;

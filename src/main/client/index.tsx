@@ -1,4 +1,3 @@
-import { AxiosError, AxiosResponse } from 'axios';
 import { ApiClient } from './api.client';
 import {
   END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
@@ -78,10 +77,10 @@ export class NumeratorClient {
 
   async featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig> {
     try {
+      const url = `${END_POINT_FEATURE_FLAG_CONFIG_BY_KEY}?key=${key}`
       const response = await this.apiClient.request<FeatureFlagConfig>({
         method: 'GET',
-        endpoint: END_POINT_FEATURE_FLAG_CONFIG_BY_KEY,
-        params: { key },
+        endpoint: url,
       });
 
       if (response.error) {
