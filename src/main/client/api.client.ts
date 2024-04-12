@@ -12,11 +12,12 @@ export class ApiClient {
   }
 
   async request<T>(apiRequestOptions: ApiRequestOptions): Promise<ApiResponse<T>> {
-    const { method, endpoint, data } = apiRequestOptions
+    const { method, endpoint, data, headers: headerRequest } = apiRequestOptions
     const url = `${this.baseUrl}/${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
       [ApiClient.API_KEY_HEADER]: this.apiKey,
+      ...headerRequest
     };
 
     try {
@@ -25,7 +26,8 @@ export class ApiClient {
         headers,
         body: JSON.stringify(data),
       });
-      return { data: snakeToCamel(response.json()), error: undefined, headers: response.headers };
+      const resData = await response.json()
+      return { data: snakeToCamel(resData), error: undefined, headers: response.headers };
     } catch (error: Error | any) {
       return { data: undefined, error };
     }
