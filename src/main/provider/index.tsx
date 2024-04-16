@@ -213,6 +213,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     startPolling,
     stopPolling,
     fetchPollingFeatureFlag,
+    cacheFlags
   };
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;

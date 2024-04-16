@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ConfigClient, FeatureFlagConfig, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
 
 export interface NumeratorContextType {
   
@@ -119,6 +119,8 @@ export interface NumeratorContextType {
    * @param eTag - The tag to check if value update or not
    */
   fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
+
+  cacheFlags: Record<string, FlagCollection>
 }
 
 export interface NumeratorProviderProps {

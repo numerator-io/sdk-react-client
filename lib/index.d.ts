@@ -193,6 +193,7 @@ interface NumeratorContextType {
      * @param eTag - The tag to check if value update or not
      */
     fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
+    cacheFlags: Record<string, FlagCollection>;
 }
 interface NumeratorProviderProps {
     children: ReactNode;
