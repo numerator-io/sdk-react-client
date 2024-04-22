@@ -9,6 +9,7 @@ import {
   ConfigClient,
   FlagVariationValue,
   FlagEvaluationDetail,
+  ErrorResponse,
 } from '../../main';
 import { useEffect, useState } from 'react';
 
@@ -62,15 +63,15 @@ describe('NumeratorProvider', () => {
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
       const { featureFlags } = useNumeratorContext();
-      const [flags, setFlags] = useState<FeatureFlagConfig[]>()
+      const [flags, setFlags] = useState<FeatureFlagConfig[]>();
 
       useEffect(() => {
-          const fetchData = async () => {
-            let res = await  featureFlags()
-            setFlags(res)
-          }
-          fetchData()
-      }, [])
+        const fetchData = async () => {
+          let res = await featureFlags();
+          setFlags(res);
+        };
+        fetchData();
+      }, []);
 
       return (
         <div>
@@ -115,15 +116,15 @@ describe('NumeratorProvider', () => {
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
       const { booleanFlagVariationDetail } = useNumeratorContext();
-      const [flag, setFlag] = useState<FlagEvaluationDetail<boolean>>()
+      const [flag, setFlag] = useState<FlagEvaluationDetail<boolean>>();
 
       useEffect(() => {
-          const fetchData = async () => {
-            let res = await  booleanFlagVariationDetail('feature1', false, {platform: 'android'})
-            setFlag(res)
-          }
-          fetchData()
-      }, [])
+        const fetchData = async () => {
+          let res = await booleanFlagVariationDetail('feature1', false, { platform: 'android' });
+          setFlag(res);
+        };
+        fetchData();
+      }, []);
 
       return (
         <div>
@@ -165,15 +166,15 @@ describe('NumeratorProvider', () => {
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
       const { stringFlagVariationDetail } = useNumeratorContext();
-      const [flag, setFlag] = useState<FlagEvaluationDetail<string>>()
+      const [flag, setFlag] = useState<FlagEvaluationDetail<string>>();
 
       useEffect(() => {
-          const fetchData = async () => {
-            let res = await  stringFlagVariationDetail('feature1', 'demo', {platform: 'android'})
-            setFlag(res)
-          }
-          fetchData()
-      }, [])
+        const fetchData = async () => {
+          let res = await stringFlagVariationDetail('feature1', 'demo', { platform: 'android' });
+          setFlag(res);
+        };
+        fetchData();
+      }, []);
 
       return (
         <div>
@@ -215,7 +216,7 @@ describe('NumeratorProvider', () => {
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
       const { numberFlagVariationDetail: numberFlagVariation } = useNumeratorContext();
-      const [flag, setFlag] = useState<FlagEvaluationDetail<number>>()
+      const [flag, setFlag] = useState<FlagEvaluationDetail<number>>();
 
       useEffect(() => {
         const fetchData = async () => {
@@ -265,15 +266,15 @@ describe('NumeratorProvider', () => {
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
       const { numberFlagVariationDetail } = useNumeratorContext();
-      const [flag, setFlag] = useState<FlagEvaluationDetail<number>>()
+      const [flag, setFlag] = useState<FlagEvaluationDetail<number>>();
 
       useEffect(() => {
-          const fetchData = async () => {
-            let res = await  numberFlagVariationDetail('feature1', 1.23, {platform: 'android'})
-            setFlag(res)
-          }
-          fetchData()
-      }, [])
+        const fetchData = async () => {
+          let res = await numberFlagVariationDetail('feature1', 1.23, { platform: 'android' });
+          setFlag(res);
+        };
+        fetchData();
+      }, []);
 
       return (
         <div>
@@ -367,13 +368,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { stringValue: 'test value by key' },
-          valueType: FlagValueTypeEnum.STRING,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -417,7 +418,6 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value');
     });
-
   });
 
   it('fetch polling - return by detail - not match context', async () => {
@@ -435,13 +435,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { stringValue: 'test value by key' },
-          valueType: FlagValueTypeEnum.STRING,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -485,7 +485,6 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value by key');
     });
-
   });
 
   it('fetch polling - return by detail - not match key', async () => {
@@ -503,13 +502,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { stringValue: 'test value by key' },
-          valueType: FlagValueTypeEnum.STRING,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -553,7 +552,6 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value by key');
     });
-
   });
 
   it('fetch polling - return by cache - boolean', async () => {
@@ -571,13 +569,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { booleanValue: true },
-          valueType: FlagValueTypeEnum.BOOLEAN,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { booleanValue: true },
+      valueType: FlagValueTypeEnum.BOOLEAN,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -621,7 +619,6 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('false');
     });
-
   });
 
   it('fetch polling - return by cache - number', async () => {
@@ -639,13 +636,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { longValue: 11 },
-          valueType: FlagValueTypeEnum.LONG,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { longValue: 11 },
+      valueType: FlagValueTypeEnum.LONG,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -689,7 +686,6 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('22');
     });
-
   });
 
   it('stop polling - return by detail', async () => {
@@ -707,13 +703,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { stringValue: 'test value by key' },
-          valueType: FlagValueTypeEnum.STRING,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -723,7 +719,7 @@ describe('NumeratorProvider', () => {
       const [flagValue, setFlagValue] = useState<any>();
 
       const getValue = async () => {
-        stopPolling()
+        stopPolling();
         const res = await getFeatureFlag('feature1', 'demo', { platform: 'ios' });
         setFlagValue(res);
       };
@@ -758,9 +754,7 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('demo');
     });
-
   });
-
 
   it('start polling - return by detail', async () => {
     // Mock featureFlags response from NumeratorClient
@@ -777,13 +771,13 @@ describe('NumeratorProvider', () => {
 
       eTag: 'someEtag',
     };
-        // Mock featureFlags response from NumeratorClient
-        const mockFeatureFlagValue: FlagVariationValue = {
-          key: 'feature1',
-          status: FlagStatusEnum.ON,
-          value: { stringValue: 'test value by key' },
-          valueType: FlagValueTypeEnum.STRING,
-        };
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
     (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
@@ -793,8 +787,8 @@ describe('NumeratorProvider', () => {
       const [flagValue, setFlagValue] = useState<any>();
 
       useEffect(() => {
-        startPolling()
-      }, [])
+        startPolling();
+      }, []);
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', 'demo', { platform: 'ios' });
@@ -820,8 +814,6 @@ describe('NumeratorProvider', () => {
       </NumeratorProvider>,
     );
 
-
-
     act(() => {
       jest.advanceTimersByTime(50000);
     });
@@ -833,6 +825,207 @@ describe('NumeratorProvider', () => {
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value');
     });
+  });
 
+  it('handle event flag updated polling - return by detail', async () => {
+    // Mock featureFlags response from NumeratorClient
+    const firstMockFeatureFlagColections = {
+      flags: [
+        {
+          id: '1',
+          key: 'feature1',
+          value: { stringValue: 'test value 1' },
+          valueType: FlagValueTypeEnum.STRING,
+          createdAt: '2024-04-01',
+        },
+      ],
+
+      eTag: 'firstEtag',
+    };
+    const secondMockFeatureFlagColections = {
+      flags: [
+        {
+          id: '1',
+          key: 'feature1',
+          value: { stringValue: 'test value 2' },
+          valueType: FlagValueTypeEnum.STRING,
+          createdAt: '2024-04-01',
+        },
+      ],
+
+      eTag: 'secondEtag',
+    };
+
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
+
+    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock)
+      .mockResolvedValueOnce(firstMockFeatureFlagColections)
+      .mockResolvedValueOnce(secondMockFeatureFlagColections);
+
+    (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
+
+    jest.useFakeTimers();
+
+    // Render NumeratorProvider with a component that consumes the context
+    const ConsumerComponent = () => {
+      const { startPolling, handleFlagUpdated } = useNumeratorContext();
+      const [flagValue, setFlagValue] = useState<any>();
+
+      useEffect(() => {
+        startPolling();
+      }, []);
+
+      useEffect(() => {
+        handleFlagUpdated((flags) => {
+          // Handle flag updated event
+          const updatedFlag = flags['feature1'];
+          setFlagValue(updatedFlag?.value.stringValue ?? '');
+        });
+      }, [handleFlagUpdated]);
+
+      return (
+        <div>
+          <h1>Feature Flags:</h1>
+          <p key="demo" data-testid="demo">
+            {String(flagValue)}
+          </p>
+        </div>
+      );
+    };
+
+    render(
+      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }} loadPolling={false}>
+        <ConsumerComponent />
+      </NumeratorProvider>,
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(40000);
+    });
+
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('demo').textContent).toBe('test value 1');
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(40000);
+    });
+
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(2);
+      expect(screen.getByTestId('demo').textContent).toBe('test value 2');
+    });
+  });
+
+  it('handle event flag updated error polling - return by detail', async () => {
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagCollections = {
+      flags: [
+        {
+          id: '1',
+          key: 'feature1',
+          value: { stringValue: 'test value' },
+          valueType: FlagValueTypeEnum.STRING,
+          createdAt: '2024-04-01',
+        },
+      ],
+      eTag: 'firstEtag',
+    };
+
+    const errorResponse: ErrorResponse = {
+      message: 'Something wrong with server',
+      errorStatus: 500,
+      errorCode: '500 Internal Server Error',
+    };
+
+    // Mock featureFlags response from NumeratorClient
+    const mockFeatureFlagValue: FlagVariationValue = {
+      key: 'feature1',
+      status: FlagStatusEnum.ON,
+      value: { stringValue: 'test value by key' },
+      valueType: FlagValueTypeEnum.STRING,
+    };
+
+    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock)
+      .mockResolvedValueOnce(mockFeatureFlagCollections)
+      .mockRejectedValueOnce(errorResponse);
+
+    (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
+
+    jest.useFakeTimers();
+
+    // Render NumeratorProvider with a component that consumes the context
+    const ConsumerComponent = () => {
+      const { startPolling, handleFlagUpdated, handleFlagUpdatedError, cacheFlags } = useNumeratorContext();
+      const [flagValue, setFlagValue] = useState<any>();
+      const [errorOnPolling, setErrorOnPolling] = useState<any>(null);
+
+      useEffect(() => {
+        startPolling();
+      }, []);
+
+      useEffect(() => {
+        handleFlagUpdated((flags) => {
+          // Handle flag updated event
+          const updatedFlag = flags['feature1'];
+          setFlagValue(updatedFlag?.value.stringValue ?? '');
+        });
+      }, [handleFlagUpdated]);
+
+      useEffect(() => {
+        handleFlagUpdatedError((flags, error) => {
+          // Handle flag updated error event
+          setErrorOnPolling(error);
+        });
+      }, [handleFlagUpdatedError]);
+
+      return (
+        <div>
+          <h1>Feature Flags:</h1>
+          <p key="demo" data-testid="demo">
+            {String(flagValue)}
+          </p>
+          <p key="error" data-testid="error">
+            {errorOnPolling ? errorOnPolling.message : ''}
+          </p>
+        </div>
+      );
+    };
+
+    render(
+      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }} loadPolling={false}>
+        <ConsumerComponent />
+      </NumeratorProvider>,
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(40000);
+    });
+
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('error').textContent).toBe('');
+      expect(screen.getByTestId('demo').textContent).toBe('test value');
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(40000);
+    });
+
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(2);
+      expect(screen.getByTestId('error').textContent).toBe('Something wrong with server');
+    });
   });
 });
