@@ -8,5 +8,8 @@ export default async (): Promise<Config> => {
     },
     setupFiles: ['<rootDir>/setup.jest.ts'],
     testEnvironment: 'jsdom',
+    moduleNameMapper: {
+      '^@/(.*)$': '<rootDir>/src/main/$1', // Example alias mapping
+    },
   };
 };
