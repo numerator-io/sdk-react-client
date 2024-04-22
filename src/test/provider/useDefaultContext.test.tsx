@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useDefaultContext } from '../../main/provider/useDefaultContext';
+import { useDefaultContext } from '@/provider/useDefaultContext';
 
 describe('useDefaultContext hook', () => {
   it('should return default context', () => {

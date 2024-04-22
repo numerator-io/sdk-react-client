@@ -1,10 +1,10 @@
-import { ApiClient } from './api.client';
+import { ApiClient } from '@/client/api.client';
 import {
   END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
   END_POINT_FEATURE_FLAG_CONFIG_BY_KEY,
   END_POINT_FEATURE_FLAG_CONFIG_LISTING,
   END_POINT_FEATURE_FLAG_VALUE_BY_KEY,
-} from './endpoint.client';
+} from '@/client/endpoint.client';
 import {
   ConfigClient,
   ErrorResponse,
@@ -15,7 +15,7 @@ import {
   FeatureFlagValueByKeyRequest,
   FlagCollection,
   FlagVariationValue,
-} from './type.client';
+} from '@/client/type.client';
 
 export class NumeratorClient {
   private apiClient: ApiClient;

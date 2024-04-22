@@ -1,5 +1,5 @@
-import { snakeToCamel } from '../util';
-import { ApiRequestOptions, ApiResponse, ConfigClient } from './type.client';
+import { snakeToCamel } from '@/util';
+import { ApiRequestOptions, ApiResponse, ConfigClient } from '@/client/type.client';
 
 export class ApiClient {
   readonly apiKey: string;
