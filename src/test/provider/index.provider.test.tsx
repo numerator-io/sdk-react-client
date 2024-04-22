@@ -1,20 +1,20 @@
-import { render, waitFor, screen, act, fireEvent } from '@testing-library/react';
-import {
-  NumeratorClient,
-  NumeratorProvider,
-  useNumeratorContext,
-  FeatureFlagConfig,
-  FlagStatusEnum,
-  FlagValueTypeEnum,
-  ConfigClient,
-  FlagVariationValue,
-  FlagEvaluationDetail,
-  ErrorResponse,
-} from '../../main';
 import { useEffect, useState } from 'react';
+import { render, waitFor, screen, act, fireEvent } from '@testing-library/react';
+
+import { NumeratorClient } from '@/client';
+import {
+  FlagEvaluationDetail,
+  FlagValueTypeEnum,
+  FlagStatusEnum,
+  ConfigClient,
+  ErrorResponse,
+  FeatureFlagConfig,
+  FlagVariationValue,
+} from '@/client/type.client';
+import { NumeratorProvider, useNumeratorContext } from '@/provider';
 
 // Mock NumeratorClient
-jest.mock('../../main/client');
+jest.mock('@/client');
 
 jest.useFakeTimers();
 jest.spyOn(global, 'setInterval');
@@ -322,7 +322,9 @@ describe('NumeratorProvider', () => {
         const fetchData = async () => {
           initFeatureFlag('feature1', 'demo');
           const res = await getFeatureFlag('feature1', 'demo');
-          setFlagValue(res);
+          act(() => {
+            setFlagValue(res);
+          });
         };
         fetchData();
       }, []);
@@ -385,7 +387,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', 'demo', { platform: 'ios' });
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -452,7 +456,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', 'demo');
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -519,7 +525,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature2', 'demo');
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -586,7 +594,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', true, { platform: 'ios' });
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -653,7 +663,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', 12, { platform: 'ios' });
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -721,7 +733,9 @@ describe('NumeratorProvider', () => {
       const getValue = async () => {
         stopPolling();
         const res = await getFeatureFlag('feature1', 'demo', { platform: 'ios' });
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -792,7 +806,9 @@ describe('NumeratorProvider', () => {
 
       const getValue = async () => {
         const res = await getFeatureFlag('feature1', 'demo', { platform: 'ios' });
-        setFlagValue(res);
+        act(() => {
+          setFlagValue(res);
+        });
       };
 
       return (
@@ -885,7 +901,9 @@ describe('NumeratorProvider', () => {
         handleFlagUpdated((flags) => {
           // Handle flag updated event
           const updatedFlag = flags['feature1'];
-          setFlagValue(updatedFlag?.value.stringValue ?? '');
+          act(() => {
+            setFlagValue(updatedFlag?.value.stringValue ?? '');
+          });
         });
       }, [handleFlagUpdated]);
 
@@ -977,7 +995,9 @@ describe('NumeratorProvider', () => {
         handleFlagUpdated((flags) => {
           // Handle flag updated event
           const updatedFlag = flags['feature1'];
-          setFlagValue(updatedFlag?.value.stringValue ?? '');
+          act(() => {
+            setFlagValue(updatedFlag?.value.stringValue ?? '');
+          });
         });
       }, [handleFlagUpdated]);
 

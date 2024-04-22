@@ -1,5 +1,5 @@
-import ApiClient from "../../main/client/api.client";
-import { ApiRequestOptions, ApiResponse } from "../../main/client/type.client";
+import ApiClient from "@/client/api.client";
+import { ApiRequestOptions, ApiResponse } from "@/client/type.client";
 
 
 // Mocking fetch function

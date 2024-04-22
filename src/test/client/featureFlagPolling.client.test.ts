@@ -1,9 +1,9 @@
 import { stringify } from 'querystring';
-import { NumeratorClient } from '../../main';
-import { FlagCollection, FlagValueTypeEnum } from '../../main/client/type.client';
+import { NumeratorClient } from '@/client';
+import { FlagCollection, FlagValueTypeEnum } from '@/client/type.client';
 
 // Mock ApiClient
-jest.mock('../../main/client/api.client');
+jest.mock('@/client/api.client');
 
 // Mock setInterval and clearInterval
 jest.spyOn(global, 'clearInterval');
@@ -17,8 +17,8 @@ describe('NumeratorClient', () => {
   };
 
   // Mock ApiClient
-  jest.mock('../../main/client/api.client');
-  const ApiClient = require('../../main/client/api.client').ApiClient;
+  jest.mock('@/client/api.client');
+  const ApiClient = require('@/client/api.client').ApiClient;
 
   beforeEach(() => {
     jest.clearAllMocks();

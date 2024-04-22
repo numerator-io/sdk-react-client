@@ -1,4 +1,3 @@
-
 // --- Types for ConfigClient --- //
 export type ConfigClient = {
   apiKey: string;

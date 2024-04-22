@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '../client/type.client';
+import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '@/client/type.client';
 
 export interface NumeratorContextType {
   

@@ -1,17 +1,22 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import NumeratorClient from '../client';
+import NumeratorClient from '@/client';
 import {
   ConfigClient,
   FeatureFlagConfig,
   FlagCollection,
   FlagEvaluationDetail,
   FlagVariationValue,
-} from '../client/type.client';
-import { areObjectsEqual } from '../util';
-import { NumeratorContext } from './context.provider';
-import { FlagUpdatedCallback, FlagUpdatedErrorCallback, NumeratorContextType, NumeratorProviderProps } from './type.provider';
-import { useDefaultContext } from './useDefaultContext';
+} from '@/client/type.client';
+import { areObjectsEqual } from '@/util';
+import { NumeratorContext } from '@/provider/context.provider';
+import {
+  FlagUpdatedCallback,
+  FlagUpdatedErrorCallback,
+  NumeratorContextType,
+  NumeratorProviderProps,
+} from '@/provider/type.provider';
+import { useDefaultContext } from '@/provider/useDefaultContext';
 
 const POLLING_INTERVAL = 30000; // 30 seconds
 

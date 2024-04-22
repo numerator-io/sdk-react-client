@@ -1,8 +1,9 @@
-import { ConfigClient, NumeratorClient } from '../../main';
-import ApiClient from '../../main/client/api.client';
+import { NumeratorClient } from '@/client';
+import { ConfigClient } from '@/client/type.client';
+import ApiClient from '@/client/api.client';
 
 // Mocking ApiClient
-jest.mock('../../main/client/api.client');
+jest.mock('@/client/api.client');
 
 describe('NumeratorClient', () => {
   const mockConfig: ConfigClient = {
