@@ -120,6 +120,18 @@ export interface NumeratorContextType {
    */
   fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
 
+  /**
+   * Handles the flag updated event.
+   * @param callback The callback to handle the event.
+   */
+  handleFlagUpdated(callback: FlagUpdatedCallback) :void
+
+  /**
+   * Handles the flag updated error event.
+   * @param callback The callback to handle the event.
+   */
+  handleFlagUpdatedError(callback: FlagUpdatedErrorCallback) :void
+
   cacheFlags: Record<string, FlagCollection>
 }
 
@@ -140,3 +152,13 @@ export interface NumeratorProviderProps {
    */
   loadPolling?: boolean;
 }
+
+/**
+ * Callback function when flag is updated
+*/
+export type FlagUpdatedCallback = (updatedData: Record<string, FlagCollection>) => void;
+
+/**
+ * Callback function when flag is updated
+*/
+export type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, error: any) => void;

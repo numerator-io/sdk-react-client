@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import NumeratorClient from '../client';
 import {
@@ -10,7 +10,7 @@ import {
 } from '../client/type.client';
 import { areObjectsEqual } from '../util';
 import { NumeratorContext } from './context.provider';
-import { NumeratorContextType, NumeratorProviderProps } from './type.provider';
+import { FlagUpdatedCallback, FlagUpdatedErrorCallback, NumeratorContextType, NumeratorProviderProps } from './type.provider';
 import { useDefaultContext } from './useDefaultContext';
 
 const POLLING_INTERVAL = 30000; // 30 seconds
@@ -38,21 +38,24 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
   const [currentEtag, setCurrentEtag] = useState<string>();
   const [activeTimeInterval, setActiveTimeInterval] = useState(loadPolling);
+  const [updateListeners, setUpdateListeners] = useState<FlagUpdatedCallback[]>([]);
+  const [errorListeners, setErrorListeners] = useState<FlagUpdatedErrorCallback[]>([]);
 
   const fetchPollingFeatureFlag = async () => {
     try {
       const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
       setCurrentEtag(result.etag);
-      const cache = result.flags.reduce(
+      const newCache = result.flags.reduce(
         (acc, flag) => {
           acc[flag.key] = flag;
           return acc;
         },
         {} as Record<string, any>,
       );
-      setCacheFlags(cache);
+      setCacheFlags(newCache);
+      updateListeners.forEach((listener) => listener(newCache)); // Notify all update listeners
     } catch (error) {
-      setCacheFlags({})
+      errorListeners.forEach((listener) => listener(cacheFlags, error)); // Notify all error listeners
     }
   };
 
@@ -185,6 +188,18 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     setCacheFlags({});
   };
 
+  // Register and unregister update listeners
+  const handleFlagUpdated = useCallback((callback: FlagUpdatedCallback) => {
+    setUpdateListeners((prev) => [...prev, callback]);
+    return () => setUpdateListeners((prev) => prev.filter((c) => c !== callback));
+  }, []);
+
+  // Register and unregister error listeners
+  const handleFlagUpdatedError = useCallback((callback: FlagUpdatedErrorCallback) => {
+    setErrorListeners((prev) => [...prev, callback]);
+    return () => setErrorListeners((prev) => prev.filter((c) => c !== callback));
+  }, []);
+
   useEffect(() => {
     let timeInterval: any;
 
@@ -213,7 +228,9 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     startPolling,
     stopPolling,
     fetchPollingFeatureFlag,
-    cacheFlags
+    handleFlagUpdated,
+    handleFlagUpdatedError,
+    cacheFlags,
   };
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
