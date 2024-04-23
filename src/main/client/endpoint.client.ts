@@ -1,4 +1,4 @@
-const END_POINT_BASE = 'api/sdk/feature-flag';
+const END_POINT_BASE = 'api/v1/sdk/feature-flag';
 
 // Get all feature flags config associated with the project
 export const END_POINT_FEATURE_FLAG_CONFIG_LISTING = `${END_POINT_BASE}/listing`;

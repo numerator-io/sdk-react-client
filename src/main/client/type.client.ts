@@ -2,6 +2,7 @@
 export type ConfigClient = {
   apiKey: string;
   baseUrl?: string;
+  pollingInterval?: number;
 };
 
 // --- Types for ApiClient --- //
@@ -14,7 +15,7 @@ export interface ErrorResponse {
 export interface ApiResponse<T> {
   data?: T;
   error?: ErrorResponse | any;
-  headers?: any
+  headers?: any;
 }
 
 export interface ApiRequestOptions {
@@ -22,7 +23,6 @@ export interface ApiRequestOptions {
   method: string;
   headers?: Record<string, any>;
   data?: Record<string, any>;
-
 }
 
 export interface ApiClientInterface {
@@ -59,8 +59,8 @@ export interface FeatureFlagConfigListingResponse extends PaginationResponse<Fea
 }
 
 export interface FeatureFlagPollingResponse {
-  flags: FlagCollection[],
-  etag: string
+  flags: FlagCollection[];
+  etag: string;
 }
 // --- Types for Feature Flag --- //
 export type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';
@@ -106,15 +106,15 @@ export interface VariationValue {
 }
 
 export interface FlagEvaluationDetail<T> {
-  key: string,
-  value: T,
-  reason: Record<string, any> | null
+  key: string;
+  value: T;
+  reason: Record<string, any> | null;
 }
 
 export interface FlagCollection {
-  id: string,
-  key: string,
-  value: VariationValue,
-  valueType: FlagValueTypeEnum,
-  createdAt: string
+  id: string;
+  key: string;
+  value: VariationValue;
+  valueType: FlagValueTypeEnum;
+  createdAt: string;
 }

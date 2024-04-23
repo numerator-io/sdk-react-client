@@ -23,7 +23,7 @@ const POLLING_INTERVAL = 30000; // 30 seconds
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
     apiKey: configClient.apiKey,
-    baseUrl: configClient.baseUrl || 'https://service-platform.dev.numerator.io',
+    baseUrl: configClient.baseUrl || 'https://service-platform.numerator.io',
   });
 
   return numeratorClient;
@@ -37,6 +37,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   loadPolling = true,
 }) => {
   // Initialize the SDK client
+
   const numeratorClient: NumeratorClient = initializeNumeratorClient(configClient);
   const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({});
   const [flags, setFlags] = useState<Record<string, any>>({});
@@ -129,12 +130,14 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     try {
       const requestContext = context ?? (useDefaultContext ? defaultContext : {});
       const variation = await flagValueByKey(key, requestContext);
+
       return {
         key: key,
         value: variation.value.stringValue ?? '',
         reason: {},
       };
     } catch (e) {
+      console.log('error', e);
       return {
         key: key,
         value: defaultVal,
@@ -206,15 +209,15 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   }, []);
 
   useEffect(() => {
-    let timeInterval: any;
+    let timeIntervalId: any;
 
     if (activeTimeInterval) {
-      timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL);
+      timeIntervalId = setInterval(fetchPollingFeatureFlag, configClient.pollingInterval || POLLING_INTERVAL);
     } else {
-      clearInterval(timeInterval);
+      clearInterval(timeIntervalId);
     }
 
-    return () => clearInterval(timeInterval);
+    return () => clearInterval(timeIntervalId);
   }, [activeTimeInterval]);
 
   // Create an object with SDK methods and state to be shared
