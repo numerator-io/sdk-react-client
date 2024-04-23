@@ -48,7 +48,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
 
   const fetchPollingFeatureFlag = async () => {
     try {
-      const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
+      const result = await numeratorClient.fetchPollingFlag(defaultContext, currentEtag);
       setCurrentEtag(result.etag);
       const newCache = result.flags.reduce(
         (acc, flag) => {

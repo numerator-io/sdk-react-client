@@ -377,7 +377,7 @@ describe('NumeratorProvider', () => {
       value: { stringValue: 'test value by key' },
       valueType: FlagValueTypeEnum.STRING,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -417,7 +417,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value');
@@ -446,7 +446,7 @@ describe('NumeratorProvider', () => {
       value: { stringValue: 'test value by key' },
       valueType: FlagValueTypeEnum.STRING,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -486,7 +486,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value by key');
@@ -515,7 +515,7 @@ describe('NumeratorProvider', () => {
       value: { stringValue: 'test value by key' },
       valueType: FlagValueTypeEnum.STRING,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -555,7 +555,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value by key');
@@ -584,7 +584,7 @@ describe('NumeratorProvider', () => {
       value: { booleanValue: true },
       valueType: FlagValueTypeEnum.BOOLEAN,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -624,7 +624,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('false');
@@ -653,7 +653,7 @@ describe('NumeratorProvider', () => {
       value: { longValue: 11 },
       valueType: FlagValueTypeEnum.LONG,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -693,7 +693,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('22');
@@ -722,7 +722,7 @@ describe('NumeratorProvider', () => {
       value: { stringValue: 'test value by key' },
       valueType: FlagValueTypeEnum.STRING,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -763,7 +763,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('demo');
@@ -792,7 +792,7 @@ describe('NumeratorProvider', () => {
       value: { stringValue: 'test value by key' },
       valueType: FlagValueTypeEnum.STRING,
     };
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock).mockResolvedValueOnce(mockFeatureFlagColections);
     (NumeratorClient.prototype.getFeatureFlagByKey as jest.Mock).mockResolvedValueOnce(mockFeatureFlagValue);
     jest.useFakeTimers();
     // Render NumeratorProvider with a component that consumes the context
@@ -836,7 +836,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       const btn = screen.getByTestId('btn');
       fireEvent.click(btn);
       expect(screen.getByTestId('demo').textContent).toBe('test value');
@@ -880,7 +880,7 @@ describe('NumeratorProvider', () => {
       valueType: FlagValueTypeEnum.STRING,
     };
 
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock)
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock)
       .mockResolvedValueOnce(firstMockFeatureFlagColections)
       .mockResolvedValueOnce(secondMockFeatureFlagColections);
 
@@ -929,7 +929,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId('demo').textContent).toBe('test value 1');
     });
 
@@ -939,7 +939,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(2);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(2);
       expect(screen.getByTestId('demo').textContent).toBe('test value 2');
     });
   });
@@ -973,7 +973,7 @@ describe('NumeratorProvider', () => {
       valueType: FlagValueTypeEnum.STRING,
     };
 
-    (NumeratorClient.prototype.fetchPoolingFlag as jest.Mock)
+    (NumeratorClient.prototype.fetchPollingFlag as jest.Mock)
       .mockResolvedValueOnce(mockFeatureFlagCollections)
       .mockRejectedValueOnce(errorResponse);
 
@@ -1033,7 +1033,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(1);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId('error').textContent).toBe('');
       expect(screen.getByTestId('demo').textContent).toBe('test value');
     });
@@ -1044,7 +1044,7 @@ describe('NumeratorProvider', () => {
 
     // Wait for promises to resolve
     await waitFor(() => {
-      expect(NumeratorClient.prototype.fetchPoolingFlag).toHaveBeenCalledTimes(2);
+      expect(NumeratorClient.prototype.fetchPollingFlag).toHaveBeenCalledTimes(2);
       expect(screen.getByTestId('error').textContent).toBe('Something wrong with server');
     });
   });

@@ -1,6 +1,6 @@
 import { ApiClient } from '@/client/api.client';
 import {
-  END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
+  END_POINT_FEATURE_FLAG_COLLECTION_POLLING,
   END_POINT_FEATURE_FLAG_CONFIG_BY_KEY,
   END_POINT_FEATURE_FLAG_CONFIG_LISTING,
   END_POINT_FEATURE_FLAG_VALUE_BY_KEY,
@@ -122,7 +122,7 @@ export class NumeratorClient {
     }
   }
 
-  async fetchPoolingFlag(
+  async fetchPollingFlag(
     context: Record<string, any>,
     eTag?: string | undefined,
   ): Promise<FeatureFlagPollingResponse> {
@@ -131,7 +131,7 @@ export class NumeratorClient {
       const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
         method: 'POST',
         headers: headers,
-        endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POOLING,
+        endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POLLING,
         data: { context },
       });
 
