@@ -225,7 +225,6 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   }, [activeTimeInterval, fetchPollingFeatureFlag]);
 
   // Create an object with SDK methods and state to be shared
-
   const sdkContextValue: NumeratorContextType = useMemo(
     () => ({
       featureFlags,
