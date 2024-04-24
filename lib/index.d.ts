@@ -106,7 +106,7 @@ declare class NumeratorClient {
     allFeatureFlagsConfig(): Promise<FeatureFlagConfig[]>;
     featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig>;
     getFeatureFlagByKey<T>(request: FeatureFlagValueByKeyRequest): Promise<FlagVariationValue>;
-    fetchPoolingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse>;
+    fetchPollingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse>;
 }
 
 interface NumeratorContextType {
@@ -180,19 +180,33 @@ interface NumeratorContextType {
      */
     removeDefaultContextValue(key: string): void;
     /**
-     * Start the polling feature flag
+     * Start polling feature flag
      */
     startPolling(): void;
     /**
-     * Stop the polling feature flag
+     * Stop polling feature flag
      */
     stopPolling(): void;
+    /**
+     * Restart polling feature flag
+     */
+    restartPolling(): void;
     /**
      * Get polling flag value
      * @param context - Optional context data to be passed to the NumeratorClient.
      * @param eTag - The tag to check if value update or not
      */
     fetchPollingFeatureFlag(context: Record<string, any>, eTag?: string): void;
+    /**
+     * Handles the flag updated event.
+     * @param callback The callback to handle the event.
+     */
+    handleFlagUpdated(callback: FlagUpdatedCallback): void;
+    /**
+     * Handles the flag updated error event.
+     * @param callback The callback to handle the event.
+     */
+    handleFlagUpdatedError(callback: FlagUpdatedErrorCallback): void;
     cacheFlags: Record<string, FlagCollection>;
 }
 interface NumeratorProviderProps {
@@ -210,8 +224,16 @@ interface NumeratorProviderProps {
      */
     loadPolling?: boolean;
 }
+/**
+ * Callback function when flag is updated
+*/
+type FlagUpdatedCallback = (updatedData: Record<string, FlagCollection>) => void;
+/**
+ * Callback function when flag is updated
+*/
+type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, error: any) => void;
 
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
 declare const useNumeratorContext: () => NumeratorContextType;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, FlagValueTypeEnum, type FlagVariationValue, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, useNumeratorContext };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, type FlagUpdatedCallback, type FlagUpdatedErrorCallback, FlagValueTypeEnum, type FlagVariationValue, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, useNumeratorContext };

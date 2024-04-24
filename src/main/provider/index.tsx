@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import NumeratorClient from '@/client';
 import {
@@ -46,9 +46,9 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const [updateListeners, setUpdateListeners] = useState<FlagUpdatedCallback[]>([]);
   const [errorListeners, setErrorListeners] = useState<FlagUpdatedErrorCallback[]>([]);
 
-  const fetchPollingFeatureFlag = async () => {
+  const fetchPollingFeatureFlag = useCallback(async () => {
     try {
-      const result = await numeratorClient.fetchPoolingFlag(defaultContext, currentEtag);
+      const result = await numeratorClient.fetchPollingFlag(defaultContextValues, currentEtag);
       setCurrentEtag(result.etag);
       const newCache = result.flags.reduce(
         (acc, flag) => {
@@ -62,7 +62,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     } catch (error) {
       errorListeners.forEach((listener) => listener(cacheFlags, error)); // Notify all error listeners
     }
-  };
+  }, [numeratorClient, defaultContextValues, currentEtag, updateListeners, errorListeners]);
 
   const flagValueByKey = async (key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue> => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
@@ -144,8 +144,10 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   };
 
   const initFeatureFlag = (key: string, defaultVal: any) => {
-    flags[key] = defaultVal;
-    setFlags(flags);
+    setFlags((prevFlags) => ({
+      ...prevFlags,
+      [key]: defaultVal,
+    }));
   };
 
   const getFeatureFlag = async (
@@ -193,6 +195,11 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     setCacheFlags({});
   };
 
+  const restartPolling = useCallback(() => {
+    stopPolling();
+    startPolling();
+  }, [stopPolling, startPolling]);
+
   // Register and unregister update listeners
   const handleFlagUpdated = useCallback((callback: FlagUpdatedCallback) => {
     setUpdateListeners((prev) => [...prev, callback]);
@@ -215,28 +222,32 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     }
 
     return () => clearInterval(timeInterval);
-  }, [activeTimeInterval]);
+  }, [activeTimeInterval, fetchPollingFeatureFlag]);
 
   // Create an object with SDK methods and state to be shared
-  const sdkContextValue: NumeratorContextType = {
-    featureFlags,
-    flagValueByKey,
-    booleanFlagVariationDetail,
-    numberFlagVariationDetail,
-    stringFlagVariationDetail,
-    initFeatureFlag,
-    getFeatureFlag,
-    getDefaultContext,
-    clearDefaultContext,
-    addDefaultContextValue,
-    removeDefaultContextValue,
-    startPolling,
-    stopPolling,
-    fetchPollingFeatureFlag,
-    handleFlagUpdated,
-    handleFlagUpdatedError,
-    cacheFlags,
-  };
+  const sdkContextValue: NumeratorContextType = useMemo(
+    () => ({
+      featureFlags,
+      flagValueByKey,
+      booleanFlagVariationDetail,
+      numberFlagVariationDetail,
+      stringFlagVariationDetail,
+      initFeatureFlag,
+      getFeatureFlag,
+      getDefaultContext,
+      clearDefaultContext,
+      addDefaultContextValue,
+      removeDefaultContextValue,
+      startPolling,
+      stopPolling,
+      restartPolling,
+      fetchPollingFeatureFlag,
+      handleFlagUpdated,
+      handleFlagUpdatedError,
+      cacheFlags,
+    }),
+    [cacheFlags],
+  );
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
 };

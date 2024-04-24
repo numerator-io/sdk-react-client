@@ -57,7 +57,7 @@ describe('NumeratorClient', () => {
       (ApiClient.prototype.request as jest.Mock).mockResolvedValueOnce(response);
 
       const numeratorClient = new NumeratorClient(mockConfig);
-      const result = await numeratorClient.fetchPoolingFlag({ userId: 'user123' });
+      const result = await numeratorClient.fetchPollingFlag({ userId: 'user123' });
       expect(result.flags.toString()).toEqual(data.toString());
     });
     it('should fetch featureFlagPolling fail', async () => {
@@ -68,7 +68,7 @@ describe('NumeratorClient', () => {
       });
 
       const numeratorClient = new NumeratorClient(mockConfig);
-      await expect(numeratorClient.fetchPoolingFlag({ userId: 'user123' })).rejects.toMatchObject(error);
+      await expect(numeratorClient.fetchPollingFlag({ userId: 'user123' })).rejects.toMatchObject(error);
     });
   });
 });
