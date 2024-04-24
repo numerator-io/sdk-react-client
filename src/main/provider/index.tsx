@@ -64,7 +64,6 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     }
   }, [numeratorClient, defaultContextValues, currentEtag, updateListeners, errorListeners]);
 
-
   const flagValueByKey = async (key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue> => {
     const result = await numeratorClient.getFeatureFlagByKey({ key, context });
     return result;
@@ -201,24 +200,17 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     startPolling();
   }, [stopPolling, startPolling]);
 
-
   // Register and unregister update listeners
-  const handleFlagUpdated = useCallback(
-    (callback: FlagUpdatedCallback) => {
-      setUpdateListeners((prev) => [...prev, callback]);
-      return () => setUpdateListeners((prev) => prev.filter((c) => c !== callback));
-    },
-    [setUpdateListeners],
-  );
+  const handleFlagUpdated = useCallback((callback: FlagUpdatedCallback) => {
+    setUpdateListeners((prev) => [...prev, callback]);
+    return () => setUpdateListeners((prev) => prev.filter((c) => c !== callback));
+  }, []);
 
   // Register and unregister error listeners
-  const handleFlagUpdatedError = useCallback(
-    (callback: FlagUpdatedErrorCallback) => {
-      setErrorListeners((prev) => [...prev, callback]);
-      return () => setErrorListeners((prev) => prev.filter((c) => c !== callback));
-    },
-    [setErrorListeners],
-  );
+  const handleFlagUpdatedError = useCallback((callback: FlagUpdatedErrorCallback) => {
+    setErrorListeners((prev) => [...prev, callback]);
+    return () => setErrorListeners((prev) => prev.filter((c) => c !== callback));
+  }, []);
 
   useEffect(() => {
     let timeInterval: any;
