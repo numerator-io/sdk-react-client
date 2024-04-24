@@ -180,13 +180,17 @@ interface NumeratorContextType {
      */
     removeDefaultContextValue(key: string): void;
     /**
-     * Start the polling feature flag
+     * Start polling feature flag
      */
     startPolling(): void;
     /**
-     * Stop the polling feature flag
+     * Stop polling feature flag
      */
     stopPolling(): void;
+    /**
+     * Restart polling feature flag
+     */
+    restartPolling(): void;
     /**
      * Get polling flag value
      * @param context - Optional context data to be passed to the NumeratorClient.

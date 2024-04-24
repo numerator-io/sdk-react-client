@@ -890,12 +890,8 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { startPolling, handleFlagUpdated } = useNumeratorContext();
+      const { handleFlagUpdated } = useNumeratorContext();
       const [flagValue, setFlagValue] = useState<any>();
-
-      useEffect(() => {
-        startPolling();
-      }, []);
 
       useEffect(() => {
         handleFlagUpdated((flags) => {
@@ -918,7 +914,7 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }} loadPolling={false}>
+      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );
@@ -983,13 +979,9 @@ describe('NumeratorProvider', () => {
 
     // Render NumeratorProvider with a component that consumes the context
     const ConsumerComponent = () => {
-      const { startPolling, handleFlagUpdated, handleFlagUpdatedError, cacheFlags } = useNumeratorContext();
+      const { handleFlagUpdated, handleFlagUpdatedError } = useNumeratorContext();
       const [flagValue, setFlagValue] = useState<any>();
       const [errorOnPolling, setErrorOnPolling] = useState<any>(null);
-
-      useEffect(() => {
-        startPolling();
-      }, []);
 
       useEffect(() => {
         handleFlagUpdated((flags) => {
@@ -1022,7 +1014,7 @@ describe('NumeratorProvider', () => {
     };
 
     render(
-      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }} loadPolling={false}>
+      <NumeratorProvider configClient={mockConfig} defaultContext={{ platform: 'ios' }}>
         <ConsumerComponent />
       </NumeratorProvider>,
     );

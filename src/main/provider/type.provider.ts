@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '@/client/type.client';
 
 export interface NumeratorContextType {
-  
   /**
    * Get all feature flags
    */
@@ -104,14 +103,19 @@ export interface NumeratorContextType {
   removeDefaultContextValue(key: string): void;
 
   /**
-   * Start the polling feature flag
+   * Start polling feature flag
    */
   startPolling(): void;
 
   /**
-   * Stop the polling feature flag
+   * Stop polling feature flag
    */
   stopPolling(): void;
+
+  /**
+   * Restart polling feature flag
+   */
+  restartPolling(): void;
 
   /**
    * Get polling flag value
@@ -124,15 +128,15 @@ export interface NumeratorContextType {
    * Handles the flag updated event.
    * @param callback The callback to handle the event.
    */
-  handleFlagUpdated(callback: FlagUpdatedCallback) :void
+  handleFlagUpdated(callback: FlagUpdatedCallback): void;
 
   /**
    * Handles the flag updated error event.
    * @param callback The callback to handle the event.
    */
-  handleFlagUpdatedError(callback: FlagUpdatedErrorCallback) :void
+  handleFlagUpdatedError(callback: FlagUpdatedErrorCallback): void;
 
-  cacheFlags: Record<string, FlagCollection>
+  cacheFlags: Record<string, FlagCollection>;
 }
 
 export interface NumeratorProviderProps {
