@@ -2,6 +2,7 @@
 export type ConfigClient = {
   apiKey: string;
   baseUrl?: string;
+  pollingInterval?: number;
 };
 
 // --- Types for ApiClient --- //
@@ -14,7 +15,7 @@ export interface ErrorResponse {
 export interface ApiResponse<T> {
   data?: T;
   error?: ErrorResponse | any;
-  headers?: any
+  headers?: any;
 }
 
 export interface ApiRequestOptions {

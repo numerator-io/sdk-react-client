@@ -8,16 +8,16 @@ export class ApiClient {
 
   constructor(config: ConfigClient) {
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://service-platform.dev.numerator.io'; //'https://api.numerator.io/v1';
+    this.baseUrl = config.baseUrl || 'https://service-platform.numerator.io'; //'https://api.numerator.io/v1';
   }
 
   async request<T>(apiRequestOptions: ApiRequestOptions): Promise<ApiResponse<T>> {
-    const { method, endpoint, data, headers: headerRequest } = apiRequestOptions
+    const { method, endpoint, data, headers: headerRequest } = apiRequestOptions;
     const url = `${this.baseUrl}/${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
       [ApiClient.API_KEY_HEADER]: this.apiKey,
-      ...headerRequest
+      ...headerRequest,
     };
 
     try {
@@ -30,7 +30,7 @@ export class ApiClient {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const jsonData = await response.json()
+      const jsonData = await response.json();
       return { data: snakeToCamel(jsonData), error: undefined, headers: response.headers };
     } catch (error: Error | any) {
       return { data: undefined, error };
