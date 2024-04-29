@@ -24,6 +24,7 @@ const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient 
   const numeratorClient: NumeratorClient = new NumeratorClient({
     apiKey: configClient.apiKey,
     baseUrl: configClient.baseUrl || 'https://service-platform.numerator.io',
+    pollingInterval: configClient.pollingInterval || POLLING_INTERVAL,
   });
 
   return numeratorClient;
