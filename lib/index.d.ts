@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 type ConfigClient = {
     apiKey: string;
     baseUrl?: string;
+    pollingInterval?: number;
 };
 interface ErrorResponse {
     message: string;
