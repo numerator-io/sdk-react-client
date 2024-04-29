@@ -23,7 +23,8 @@ const POLLING_INTERVAL = 30000; // 30 seconds
 const initializeNumeratorClient = (configClient: ConfigClient): NumeratorClient => {
   const numeratorClient: NumeratorClient = new NumeratorClient({
     apiKey: configClient.apiKey,
-    baseUrl: configClient.baseUrl || 'https://service-platform.dev.numerator.io',
+    baseUrl: configClient.baseUrl || 'https://service-platform.numerator.io',
+    pollingInterval: configClient.pollingInterval || POLLING_INTERVAL,
   });
 
   return numeratorClient;
@@ -213,15 +214,15 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   }, []);
 
   useEffect(() => {
-    let timeInterval: any;
+    let timeIntervalId: any;
 
     if (activeTimeInterval) {
-      timeInterval = setInterval(fetchPollingFeatureFlag, POLLING_INTERVAL);
+      timeIntervalId = setInterval(fetchPollingFeatureFlag, configClient.pollingInterval || POLLING_INTERVAL);
     } else {
-      clearInterval(timeInterval);
+      clearInterval(timeIntervalId);
     }
 
-    return () => clearInterval(timeInterval);
+    return () => clearInterval(timeIntervalId);
   }, [activeTimeInterval, fetchPollingFeatureFlag]);
 
   // Create an object with SDK methods and state to be shared
