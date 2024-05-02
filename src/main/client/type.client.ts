@@ -113,9 +113,7 @@ export interface FlagEvaluationDetail<T> {
 }
 
 export interface FlagCollection {
-  id: string,
   key: string,
   value: VariationValue,
   valueType: FlagValueTypeEnum,
-  createdAt: string
 }
