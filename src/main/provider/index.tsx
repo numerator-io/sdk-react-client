@@ -128,7 +128,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     useDefaultContext: boolean = true,
   ): Promise<FlagEvaluationDetail<string>> => {
     try {
-      const requestContext = context ?? (useDefaultContext ? defaultContext : {});
+      const requestContext = useDefaultContext ? defaultContext : context ? context : {};
       const variation = await flagValueByKey(key, requestContext);
       return {
         key: key,
