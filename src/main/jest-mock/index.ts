@@ -46,8 +46,8 @@ const mockNumeratorProvider = (props: MockNumeratorProviderProps = {}) => {
   let defaultContext = props.defaultContext ?? {};
 
   // Define base mock implementations for booleanFlagVariationDetail, numberFlagVariationDetail, and stringFlagVariationDetail
-  const flagVariationDetail = jest.fn(async (key, defaultVal, context, useDefaultContext): Promise<any> => {
-    const requestContext = useDefaultContext ? defaultContext : context ? context : {};
+  const flagVariationDetail = jest.fn(async (key, defaultVal, context?, useDefaultContext = true): Promise<any> => {
+    const requestContext = context ?? (useDefaultContext ? defaultContext : {});
     const variation = mockedFlags.find((flag) => flag.key === key && areObjectsEqual(flag.context, requestContext));
     if (variation) {
       return {
@@ -64,7 +64,7 @@ const mockNumeratorProvider = (props: MockNumeratorProviderProps = {}) => {
   });
 
   // Define mock implementation for getFeatureFlag
-  const getFeatureFlag = jest.fn(async (key, defaultVal, context, useDefaultContext): Promise<any> => {
+  const getFeatureFlag = jest.fn(async (key, defaultVal, context?, useDefaultContext = true): Promise<any> => {
     const hasCacheValue = !!context && cacheFlags.hasOwnProperty(key) && areObjectsEqual(context, props.defaultContext);
     switch (typeof defaultVal) {
       case 'boolean':

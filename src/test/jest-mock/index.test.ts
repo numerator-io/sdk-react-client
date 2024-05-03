@@ -18,7 +18,7 @@ describe('main', () => {
     const { getFeatureFlag } = mockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    const devTestFlagValue = await getFeatureFlag('dev-test-flag', false, {}, true);
+    const devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
 
     // Assertion
     expect(devTestFlagValue).toBe(true);
@@ -37,13 +37,13 @@ describe('main', () => {
     const { getFeatureFlag } = mockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    let devTestFlagValue = await getFeatureFlag('dev-test-flag', false, {}, true);
+    let devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
 
     // Assertion
     expect(devTestFlagValue).toBe(true);
 
     resetNumeratorMocks();
-    devTestFlagValue = await getFeatureFlag('dev-test-flag', false, {}, true);
+    devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
 
     expect(devTestFlagValue).toBe(false);
   });
@@ -66,12 +66,12 @@ describe('main', () => {
     const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', {}, true);
+    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
     expect(devTestFlagValue).toEqual('one');
 
-    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' }, false);
+    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' });
 
     // Assertion
     expect(devTestFlagValue).toEqual('two');
@@ -91,7 +91,7 @@ describe('main', () => {
     const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', {}, true);
+    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
     expect(devTestFlagValue).toEqual('one');
@@ -104,7 +104,7 @@ describe('main', () => {
 
     addMockedFlag(mockFlag2);
 
-    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' }, false);
+    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' });
 
     // Assertion
     expect(devTestFlagValue).toEqual('two');
@@ -128,14 +128,14 @@ describe('main', () => {
     const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', {}, true);
+    let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
     expect(devTestFlagValue).toEqual('one');
 
     removeMockedFlag('dev-test-flag', { env: 'prod' });
 
-    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' }, false);
+    devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default', { env: 'prod' });
 
     // Assertion
     expect(devTestFlagValue).toEqual('default');
@@ -154,7 +154,7 @@ describe('main', () => {
     const { booleanFlagVariationDetail } = mockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
-    const devTestFlag = await booleanFlagVariationDetail('dev-test-flag', false, {}, true);
+    const devTestFlag = await booleanFlagVariationDetail('dev-test-flag', false);
 
     // Assertion
     expect(devTestFlag.value).toBe(true);
