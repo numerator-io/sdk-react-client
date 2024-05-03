@@ -86,7 +86,6 @@ describe('main', () => {
     };
 
     mockFlags([mockFlag1]);
-    
 
     // Mocking NumeratorProvider
     const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
@@ -160,5 +159,4 @@ describe('main', () => {
     // Assertion
     expect(devTestFlag.value).toBe(true);
   });
-
 });

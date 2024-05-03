@@ -22,15 +22,6 @@ const removeMockedFlag = (key: string, context?: Record<string, any>) => {
     : mockedFlags.filter((flag) => flag.key !== key);
 };
 
-// Mock NumeratorClient
-const mockNumeratorClient = () => ({
-  featureFlagConfigListing: jest.fn(),
-  allFeatureFlagsConfig: jest.fn(),
-  featureFlagConfigByKey: jest.fn(),
-  getFeatureFlagByKey: jest.fn(),
-  fetchPollingFlag: jest.fn(),
-});
-
 export interface MockNumeratorProviderProps {
   /**
    * The configuration client instance used by the NumeratorProvider.
@@ -134,14 +125,6 @@ const resetNumeratorMocks = () => {
   // Reset mockedFlags array
   mockedFlags = [];
 
-  // Reset mocks for NumeratorClient
-  const mockClient = mockNumeratorClient();
-  Object.values(mockClient).forEach((mockFn) => {
-    if (typeof mockFn.mock !== 'undefined') {
-      mockFn.mockReset();
-    }
-  });
-
   // Reset mocks for NumeratorProvider
   const mockProvider = mockNumeratorProvider();
   Object.values(mockProvider).forEach((mockFn) => {
@@ -151,4 +134,4 @@ const resetNumeratorMocks = () => {
   });
 };
 
-export { mockFlags, addMockedFlag, removeMockedFlag, mockNumeratorProvider, mockNumeratorClient, resetNumeratorMocks };
+export { mockFlags, addMockedFlag, removeMockedFlag, mockNumeratorProvider, resetNumeratorMocks };
