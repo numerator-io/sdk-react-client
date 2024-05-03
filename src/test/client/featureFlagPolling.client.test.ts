@@ -29,11 +29,9 @@ describe('NumeratorClient', () => {
       // Mock ApiClient's request method to resolve with mock data
       const data: FlagCollection[] = [
         {
-          id: '1',
           key: 'feature1',
           value: { stringValue: 'test value' },
           valueType: FlagValueTypeEnum.STRING,
-          createdAt: '2024-04-01',
         },
       ];
 
@@ -41,11 +39,9 @@ describe('NumeratorClient', () => {
         data: {
           flags: [
             {
-              id: '1',
               key: 'feature1',
               value: { stringValue: 'test value' },
               valueType: FlagValueTypeEnum.STRING,
-              createdAt: '2024-04-01',
             },
           ],
         },
