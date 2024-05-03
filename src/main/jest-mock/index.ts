@@ -1,5 +1,4 @@
-import { FlagCollection, FlagEvaluationDetail } from '@/client/type.client';
-import { NumeratorProviderProps } from '@/provider/type.provider';
+import { ConfigClient } from '@/client/type.client';
 import { areObjectsEqual } from '@/util';
 
 // Mock flags
@@ -32,14 +31,32 @@ const mockNumeratorClient = () => ({
   fetchPollingFlag: jest.fn(),
 });
 
+export interface MockNumeratorProviderProps {
+  /**
+   * The configuration client instance used by the NumeratorProvider.
+   */
+  configClient?: ConfigClient;
+
+  /**
+   * The default context client send to NumeratorProvider
+   */
+
+  defaultContext?: Record<string, any>;
+  /**
+   * Start to load polling
+   */
+
+  loadPolling?: boolean;
+}
+
 // Mock NumeratorProvider
-const mockNumeratorProvider = (props: any = {}) => {
-  let cacheFlags: Record<string, FlagCollection> = {};
+const mockNumeratorProvider = (props: MockNumeratorProviderProps = {}) => {
+  let cacheFlags: Record<string, any> = {};
   let defaultContext = props.defaultContext ?? {};
 
   // Define base mock implementations for booleanFlagVariationDetail, numberFlagVariationDetail, and stringFlagVariationDetail
   const flagVariationDetail = jest.fn(async (key, defaultVal, context, useDefaultContext): Promise<any> => {
-    const requestContext = context ?? (useDefaultContext ? defaultContext : {});
+    const requestContext = useDefaultContext ? defaultContext : context ? context : {};
     const variation = mockedFlags.find((flag) => flag.key === key && areObjectsEqual(flag.context, requestContext));
     if (variation) {
       return {
@@ -82,11 +99,6 @@ const mockNumeratorProvider = (props: any = {}) => {
     }
   });
   return {
-    children: props.children ?? null,
-    configClient: props.configClient ?? {},
-    defaultContext: defaultContext,
-    loadPolling: props.loadPolling ?? true,
-
     getFeatureFlag,
     booleanFlagVariationDetail: flagVariationDetail,
     numberFlagVariationDetail: flagVariationDetail,
@@ -118,4 +130,25 @@ const mockNumeratorProvider = (props: any = {}) => {
   };
 };
 
-export { mockFlags, addMockedFlag, removeMockedFlag, mockNumeratorProvider, mockNumeratorClient };
+const resetNumeratorMocks = () => {
+  // Reset mockedFlags array
+  mockedFlags = [];
+
+  // Reset mocks for NumeratorClient
+  const mockClient = mockNumeratorClient();
+  Object.values(mockClient).forEach((mockFn) => {
+    if (typeof mockFn.mock !== 'undefined') {
+      mockFn.mockReset();
+    }
+  });
+
+  // Reset mocks for NumeratorProvider
+  const mockProvider = mockNumeratorProvider();
+  Object.values(mockProvider).forEach((mockFn) => {
+    if (typeof mockFn.mock !== 'undefined') {
+      mockFn.mockReset();
+    }
+  });
+};
+
+export { mockFlags, addMockedFlag, removeMockedFlag, mockNumeratorProvider, mockNumeratorClient, resetNumeratorMocks };
