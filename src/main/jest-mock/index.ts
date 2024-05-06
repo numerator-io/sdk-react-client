@@ -41,7 +41,7 @@ export interface MockNumeratorProviderProps {
 }
 
 // Mock NumeratorProvider
-const mockNumeratorProvider = (props: MockNumeratorProviderProps = {}) => {
+const useMockNumeratorProvider = (props: MockNumeratorProviderProps = {}) => {
   let cacheFlags: Record<string, any> = {};
   let defaultContext = props.defaultContext ?? {};
 
@@ -126,7 +126,7 @@ const resetNumeratorMocks = () => {
   mockedFlags = [];
 
   // Reset mocks for NumeratorProvider
-  const mockProvider = mockNumeratorProvider();
+  const mockProvider = useMockNumeratorProvider();
   Object.values(mockProvider).forEach((mockFn) => {
     if (typeof mockFn.mock !== 'undefined') {
       mockFn.mockReset();
@@ -134,4 +134,4 @@ const resetNumeratorMocks = () => {
   });
 };
 
-export { mockFlags, addMockedFlag, removeMockedFlag, mockNumeratorProvider, resetNumeratorMocks };
+export { mockFlags, addMockedFlag, removeMockedFlag, useMockNumeratorProvider, resetNumeratorMocks };

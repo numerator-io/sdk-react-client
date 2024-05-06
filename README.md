@@ -20,7 +20,7 @@ Continue your exploration by navigating through the child pages for detailed ins
 Explore our comprehensive documentation to discover advanced features, best practices, and tips for maximizing the benefits of Numerator in your projects.
 
 ## Testing
-Ensure the reliability and effectiveness of your feature flag implementation with thorough testing strategies and techniques. Learn how to conduct unit tests, integration tests, and end-to-end tests with Numerator.
+Ensure the reliability and effectiveness of your feature flag implementation with thorough testing strategies and techniques. Learn how to conduct unit tests with Numerator.
 
 ## Contributing
 We welcome contributions from the community to enhance Numerator's capabilities, fix bugs, and improve documentation. Check out our contribution guidelines to learn how you can contribute.

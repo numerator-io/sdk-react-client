@@ -1,4 +1,4 @@
-import { mockNumeratorProvider, mockFlags, resetNumeratorMocks, addMockedFlag, removeMockedFlag } from '@/jest-mock';
+import { useMockNumeratorProvider, mockFlags, resetNumeratorMocks, addMockedFlag, removeMockedFlag } from '@/jest-mock';
 
 describe('main', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('main', () => {
     mockFlags([mockFlag]);
 
     // Mocking NumeratorProvider
-    const { getFeatureFlag } = mockNumeratorProvider();
+    const { getFeatureFlag } = useMockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     const devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
@@ -34,7 +34,7 @@ describe('main', () => {
     mockFlags([mockFlag]);
 
     // Mocking NumeratorProvider
-    const { getFeatureFlag } = mockNumeratorProvider();
+    const { getFeatureFlag } = useMockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
@@ -63,7 +63,7 @@ describe('main', () => {
     mockFlags([mockFlag1, mockFlag2]);
 
     // Mocking NumeratorProvider
-    const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
+    const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
@@ -88,7 +88,7 @@ describe('main', () => {
     mockFlags([mockFlag1]);
 
     // Mocking NumeratorProvider
-    const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
+    const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
@@ -125,7 +125,7 @@ describe('main', () => {
     mockFlags([mockFlag1, mockFlag2]);
 
     // Mocking NumeratorProvider
-    const { getFeatureFlag } = mockNumeratorProvider({ defaultContext: { env: 'dev' } });
+    const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
@@ -151,7 +151,7 @@ describe('main', () => {
     mockFlags([mockFlag]);
 
     // Mocking NumeratorProvider
-    const { booleanFlagVariationDetail } = mockNumeratorProvider();
+    const { booleanFlagVariationDetail } = useMockNumeratorProvider();
 
     // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
     const devTestFlag = await booleanFlagVariationDetail('dev-test-flag', false);
