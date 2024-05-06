@@ -92,11 +92,9 @@ interface FlagEvaluationDetail<T> {
     reason: Record<string, any> | null;
 }
 interface FlagCollection {
-    id: string;
     key: string;
     value: VariationValue;
     valueType: FlagValueTypeEnum;
-    createdAt: string;
 }
 
 declare class NumeratorClient {
@@ -237,4 +235,48 @@ type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, err
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
 declare const useNumeratorContext: () => NumeratorContextType;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, type FlagUpdatedCallback, type FlagUpdatedErrorCallback, FlagValueTypeEnum, type FlagVariationValue, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, useNumeratorContext };
+interface MockFlag {
+    key: string;
+    value: any;
+    context: Record<string, any>;
+}
+declare const mockFlags: (flags: MockFlag[]) => void;
+declare const addMockedFlag: (flag: MockFlag) => void;
+declare const removeMockedFlag: (key: string, context?: Record<string, any>) => void;
+interface MockNumeratorProviderProps {
+    /**
+     * The configuration client instance used by the NumeratorProvider.
+     */
+    configClient?: ConfigClient;
+    /**
+     * The default context client send to NumeratorProvider
+     */
+    defaultContext?: Record<string, any>;
+    /**
+     * Start to load polling
+     */
+    loadPolling?: boolean;
+}
+declare const useMockNumeratorProvider: (props?: MockNumeratorProviderProps) => {
+    getFeatureFlag: jest.Mock<Promise<any>, [key: any, defaultVal: any, context?: any, useDefaultContext?: any], any>;
+    booleanFlagVariationDetail: jest.Mock<Promise<any>, [key: any, defaultVal: any, context?: any, useDefaultContext?: any], any>;
+    numberFlagVariationDetail: jest.Mock<Promise<any>, [key: any, defaultVal: any, context?: any, useDefaultContext?: any], any>;
+    stringFlagVariationDetail: jest.Mock<Promise<any>, [key: any, defaultVal: any, context?: any, useDefaultContext?: any], any>;
+    getDefaultContext: jest.Mock<Record<string, any>, [], any>;
+    clearDefaultContext: jest.Mock<{}, [], any>;
+    addDefaultContextValue: jest.Mock<{}, [key: any, value: any], any>;
+    removeDefaultContextValue: jest.Mock<void, [key: any], any>;
+    fetchPollingFeatureFlag: jest.Mock<Promise<void>, [], any>;
+    initFeatureFlag: jest.Mock<any, any, any>;
+    featureFlags: jest.Mock<any, any, any>;
+    flagValueByKey: jest.Mock<any, any, any>;
+    startPolling: jest.Mock<any, any, any>;
+    stopPolling: jest.Mock<any, any, any>;
+    restartPolling: jest.Mock<any, any, any>;
+    handleFlagUpdated: jest.Mock<any, any, any>;
+    handleFlagUpdatedError: jest.Mock<any, any, any>;
+    cacheFlags: Record<string, any>;
+};
+declare const resetNumeratorMocks: () => void;
+
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, type FlagUpdatedCallback, type FlagUpdatedErrorCallback, FlagValueTypeEnum, type FlagVariationValue, type MockNumeratorProviderProps, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, addMockedFlag, mockFlags, removeMockedFlag, resetNumeratorMocks, useMockNumeratorProvider, useNumeratorContext };

@@ -30,6 +30,10 @@ Ensure the reliability and effectiveness of your feature flag implementation wit
 
 For unit testing with Numerator, we provide five key methods: `mockFlags`, `addMockedFlag`, `removeMockedFlag`, `useMockNumeratorProvider`, `resetNumeratorMocks`.
 
+```javascript
+import { mockFlags, addMockedFlag, removeMockedFlag, useMockNumeratorProvider, resetNumeratorMocks } from "@numerator-io/sdk-react-client";
+```
+
 ### Resetting Mocked Flags
 
 Before each test, it's essential to clear any existing mocked flags. Use the `resetNumeratorMocks` method to reset the state:
