@@ -17,7 +17,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { getFeatureFlag } = useMockNumeratorProvider();
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling getFeatureFlag to get the requested flag value
     const devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
 
     // Assertion
@@ -36,7 +36,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { getFeatureFlag } = useMockNumeratorProvider();
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling getFeatureFlag to get the requested flag value
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', false);
 
     // Assertion
@@ -65,7 +65,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling getFeatureFlag to get the requested flag value
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
@@ -90,7 +90,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling getFeatureFlag to get the requested flag value
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
@@ -127,7 +127,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { getFeatureFlag } = useMockNumeratorProvider({ defaultContext: { env: 'dev' } });
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling getFeatureFlag to get the requested flag value
     let devTestFlagValue = await getFeatureFlag('dev-test-flag', 'default');
 
     // Assertion
@@ -153,7 +153,7 @@ describe('main', () => {
     // Mocking NumeratorProvider
     const { booleanFlagVariationDetail } = useMockNumeratorProvider();
 
-    // Calling booleanFlagVariationDetail to check if the flag is mocked correctly
+    // Calling booleanFlagVariationDetail to get the requested flag
     const devTestFlag = await booleanFlagVariationDetail('dev-test-flag', false);
 
     // Assertion
