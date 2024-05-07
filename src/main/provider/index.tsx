@@ -43,7 +43,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const [flags, setFlags] = useState<Record<string, any>>({});
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
   const [currentEtag, setCurrentEtag] = useState<string>();
-  const [activeTimeInterval, setActiveTimeInterval] = useState(loadPolling);
+  const [isPolling, setIsPolling] = useState(loadPolling);
   const [updateListeners, setUpdateListeners] = useState<FlagUpdatedCallback[]>([]);
   const [errorListeners, setErrorListeners] = useState<FlagUpdatedErrorCallback[]>([]);
 
@@ -188,11 +188,11 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
     useDefaultContext(defaultContextValues, setDefaultContextValues);
 
   const startPolling = () => {
-    setActiveTimeInterval(true);
+    setIsPolling(true);
   };
 
   const stopPolling = () => {
-    setActiveTimeInterval(false);
+    setIsPolling(false);
     setCacheFlags({});
   };
 
@@ -216,14 +216,14 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   useEffect(() => {
     let timeIntervalId: any;
 
-    if (activeTimeInterval) {
+    if (isPolling) {
       timeIntervalId = setInterval(fetchPollingFeatureFlag, configClient.pollingInterval || POLLING_INTERVAL);
     } else {
       clearInterval(timeIntervalId);
     }
 
     return () => clearInterval(timeIntervalId);
-  }, [activeTimeInterval, fetchPollingFeatureFlag]);
+  }, [isPolling, fetchPollingFeatureFlag]);
 
   // Create an object with SDK methods and state to be shared
   const sdkContextValue: NumeratorContextType = useMemo(
@@ -246,8 +246,9 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
       handleFlagUpdated,
       handleFlagUpdatedError,
       cacheFlags,
+      isPolling: isPolling,
     }),
-    [cacheFlags],
+    [cacheFlags, isPolling],
   );
 
   return <NumeratorContext.Provider value={sdkContextValue}>{children}</NumeratorContext.Provider>;
