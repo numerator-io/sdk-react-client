@@ -1,5 +1,11 @@
 import { ReactNode } from 'react';
-import { ConfigClient, FeatureFlagConfig, FlagCollection, FlagEvaluationDetail, FlagVariationValue } from '@/client/type.client';
+import {
+  ConfigClient,
+  FeatureFlagConfig,
+  FlagCollection,
+  FlagEvaluationDetail,
+  FlagVariationValue,
+} from '@/client/type.client';
 
 export interface NumeratorContextType {
   /**
@@ -136,7 +142,18 @@ export interface NumeratorContextType {
    */
   handleFlagUpdatedError(callback: FlagUpdatedErrorCallback): void;
 
+  /**
+   * A cache holding latest state of all feature flags. This object maps flag keys to their respective
+   * flag. This cache is automatically updated as flags are polled and fetched.
+   */
   cacheFlags: Record<string, FlagCollection>;
+
+  /**
+   * Indicates whether the feature flag polling process is currently active. This boolean is true if
+   * polling has been started and not yet stopped. It is used to manage and monitor the status of
+   * flag updates, facilitating the control of real-time feature flag checking.
+   */
+  isPolling: boolean;
 }
 
 export interface NumeratorProviderProps {
@@ -159,10 +176,10 @@ export interface NumeratorProviderProps {
 
 /**
  * Callback function when flag is updated
-*/
+ */
 export type FlagUpdatedCallback = (updatedData: Record<string, FlagCollection>) => void;
 
 /**
  * Callback function when flag is updated
-*/
+ */
 export type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, error: any) => void;

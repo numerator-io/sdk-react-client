@@ -206,7 +206,17 @@ interface NumeratorContextType {
      * @param callback The callback to handle the event.
      */
     handleFlagUpdatedError(callback: FlagUpdatedErrorCallback): void;
+    /**
+     * A cache holding latest state of all feature flags. This object maps flag keys to their respective
+     * flag. This cache is automatically updated as flags are polled and fetched.
+     */
     cacheFlags: Record<string, FlagCollection>;
+    /**
+     * Indicates whether the feature flag polling process is currently active. This boolean is true if
+     * polling has been started and not yet stopped. It is used to manage and monitor the status of
+     * flag updates, facilitating the control of real-time feature flag checking.
+     */
+    isPolling: boolean;
 }
 interface NumeratorProviderProps {
     children: ReactNode;
@@ -225,11 +235,11 @@ interface NumeratorProviderProps {
 }
 /**
  * Callback function when flag is updated
-*/
+ */
 type FlagUpdatedCallback = (updatedData: Record<string, FlagCollection>) => void;
 /**
  * Callback function when flag is updated
-*/
+ */
 type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, error: any) => void;
 
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
