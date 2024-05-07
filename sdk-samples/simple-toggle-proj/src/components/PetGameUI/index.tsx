@@ -26,12 +26,15 @@ const PetGameUI: React.FC<PetGameUIProps> = ({ animalInfo }) => {
       <button className="button button--pan" onClick={onReset}>
         <span>Reset</span>
       </button>
+      <button className="button button--pan" onClick={onReset}>
+        <span>Reset</span>
+      </button>
       <div className="card">
         <img
           className="card__img"
           src={
             animalInfo.img ??
-            "https://png.pngtree.com/png-vector/20200224/ourmid/pngtree-colorful-loading-icon-png-image_2152960.jpg"
+            'https://png.pngtree.com/png-vector/20200224/ourmid/pngtree-colorful-loading-icon-png-image_2152960.jpg'
           }
           alt="animal to guess"
         />

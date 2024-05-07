@@ -1,4 +1,5 @@
-// for more usecases, access this link: 
+// for more usecases, access this link: https://github.com/numerator-io/sdk-react-client?tab=readme-ov-file#testing
+
 import { render, screen } from "@testing-library/react";
 import {
   useMockNumeratorProvider,
