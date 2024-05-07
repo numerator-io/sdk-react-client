@@ -1,34 +1,29 @@
-import React, { useState } from "react";
-import { AnimalInfo } from "../../types";
-import "./styles.css";
+import React, { useState } from 'react';
+import { AnimalInfo } from '../../types';
+import { landAnimals, seaAnimals } from '../../constants';
+import '../../styles.css';
 
 interface PetGameUIProps {
-  animalInfo: AnimalInfo;
+  animalType: boolean;
 }
 
-const PetGameUI: React.FC<PetGameUIProps> = ({ animalInfo }) => {
-  const [guess, setGuess] = useState("");
+const PetGameUI: React.FC<PetGameUIProps> = ({ animalType }) => {
+  const animals = animalType ? landAnimals : seaAnimals;
+  const randomIndex = Math.floor(Math.random() * animals.length);
+  const animalInfo: AnimalInfo = animals[randomIndex];
+
+  const [guess, setGuess] = useState('');
 
   const onCheck = (answer: string) => {
     if (answer === animalInfo.name) {
-      alert("Correct answer");
+      alert('Correct answer');
     } else {
-      alert("Wrong answer");
+      alert('Wrong answer');
     }
   };
 
-  const onReset = () => {
-    setGuess(""); // Clear the input field
-  };
-
   return (
-    <div>
-      <button className="button button--pan" onClick={onReset}>
-        <span>Reset</span>
-      </button>
-      <button className="button button--pan" onClick={onReset}>
-        <span>Reset</span>
-      </button>
+    <>
       <div className="card">
         <img
           className="card__img"
@@ -56,7 +51,7 @@ const PetGameUI: React.FC<PetGameUIProps> = ({ animalInfo }) => {
           </button>
         </span>
       </div>
-    </div>
+    </>
   );
 };
 
