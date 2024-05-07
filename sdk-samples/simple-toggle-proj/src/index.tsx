@@ -17,7 +17,7 @@ root.render(
         pollingInterval: 5000, // 5 seconds polling to get new feature flags
       }}
       defaultContext={{}}
-      loadPolling={false}
+      loadPolling={true}
     >
       <App />
     </NumeratorProvider>

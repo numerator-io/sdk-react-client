@@ -3,10 +3,10 @@ import Header from './components/Header';
 import { useNumeratorContext } from '@numerator-io/sdk-react-client';
 import PetGameUI from './components/PetGameUI';
 
-
 function App() {
   const [isLandAnimal, setLandAnimal] = useState<boolean>(true); // true for land, false for sea
-  const { handleFlagUpdated, getFeatureFlag } = useNumeratorContext();
+  const [loading, setLoading] = useState<boolean>(false); // true for land, false for sea
+  const { handleFlagUpdated, getFeatureFlag, startPolling } = useNumeratorContext();
 
   /******** Example of using an event listener to respond to periodic updates of a feature flag ********/
   // Subscribe to flag updates to adjust the displayed animal type based on the 'enable_land_pet' flag.
@@ -16,27 +16,48 @@ function App() {
       const typeOfAnimal = flags['enable_land_pet'].value.booleanValue ?? false;
       setLandAnimal(typeOfAnimal);
     });
-
     // Clean up by unregistering the callback when the component unmounts or dependencies change.
     return unregister;
-  }, [handleFlagUpdated]);
+  }, []);
 
   /******** Example of manually get updated flag value ********/
   const onGetFlag = async () => {
-    const typeOfAnimal = await getFeatureFlag('enable_land_pet', false);
-    setLandAnimal(typeOfAnimal);
+    setLoading(true);
+    try {
+      const typeOfAnimal = await getFeatureFlag('enable_land_pet', false);
+      setLandAnimal(typeOfAnimal);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onStartPolling = () => {
+    startPolling();
+  };
+
+  const ActionBar = () => {
+    return (
+      <div className="box mr-5">
+        <button className="button button--pan" onClick={onStartPolling}>
+          <span>Start polling</span>
+        </button>
+        <span>Polling status: running...</span>
+        <div className="h-5"></div>
+        <button className="button button--pan" onClick={onGetFlag}>
+          <span>Get</span>
+        </button>
+        <span>enable_land_pet: {loading ? 'loading...' : isLandAnimal ? 'True' : 'False'}</span>
+      </div>
+    );
   };
 
   return (
     <div>
       <Header />
-      <div>
-        <button className="button button--pan" onClick={onGetFlag}>
-          <span>Get</span>
-        </button>
-        {/* <button className="button button--pan" onClick={onReset}>
-          <span>Reset</span>
-        </button> */}
+      <div className="flex justify-center items-start h-fit">
+        <ActionBar />
         <PetGameUI animalType={isLandAnimal} />
       </div>
     </div>

@@ -170,3 +170,12 @@ input:focus + .line::after {
 	transform: translate3d(0,-100%,0);
 }
 
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+
+  width: 200px;
+}
+
