@@ -1,46 +1,25 @@
-# Getting Started with Create React App
+# React Client SDK Sample: Pet Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+Welcome to the React client SDK sample Pet game project. This project serves as a demonstration of integrating the Numerator Provider into a simple Pet game application. By exploring this project, you can learn how to create a custom provider that leverages methods from the Numerator Provider. Additionally, you'll discover how to retrieve feature flags both with and without polling enabled.
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+To run this sample, simply execute `yarn start` in your terminal.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Key Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Custom Provider Integration**: Explore the `IntegratedNumeratorProvider` to understand how methods from the Numerator Provider are utilized within the custom provider. This provider offers `checkEnabledFeatureFlag` and `checkAsyncEnabledFeatureFlag` functions for retrieving flag values when polling is enabled or disabled, respectively.
 
-### `npm test`
+- **NumeratorProvider Usage**: Alternatively, you can directly use methods provided by `NumeratorProvider` to suit your specific requirements.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Testing with Jest**: If you're interested in unit testing with Jest and want to learn how to mock flags and create unit tests for your components, you can find an example in the [App.test.tsx](./src/App.test.tsx) file.
 
-### `npm run build`
+## How to Explore
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Begin by examining the implementation of the `IntegratedNumeratorProvider`. This component demonstrates how to effectively integrate the Numerator Provider's functionality into your application.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Experiment with the provided features to understand how feature flags are retrieved based on the polling state.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. Feel free to explore other components and functionalities of the Pet game to gain further insights into React client SDK development.
