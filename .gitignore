@@ -42,3 +42,6 @@ lib/test
 # production
 /build
 .env
+
+# test API
+test.rest
