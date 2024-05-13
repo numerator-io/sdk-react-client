@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useContext } from 'react';
+import React, { useCallback, useEffect, createContext, useContext } from 'react';
 import { useNumeratorContext } from '@numerator-io/sdk-react-client';
 interface IntegratedNumeratorContextType {
   /**
@@ -15,27 +15,25 @@ interface IntegratedNumeratorContextType {
   checkAsyncEnabledFeatureFlag(key: string, defaultVal?: boolean): Promise<boolean>;
 }
 
-// Create a context for the SDK
-export const IntegratedNumeratorContext = createContext<IntegratedNumeratorContextType | undefined>(undefined);
-
-type Props = {
-  children: React.ReactNode;
-};
-
-export const IntegratedNumeratorProvider: React.FC<Props> = ({ children }) => {
+const useNumeratorFeatureFlags = (): IntegratedNumeratorContextType => {
   const { handleFlagUpdated, cacheFlags, getFeatureFlag } = useNumeratorContext();
 
   // Utilize when polling is disabled (OFF)
-  const checkAsyncEnabledFeatureFlag = async (key: string, defaultVal?: boolean) => {
-    const defaultValue = cacheFlags[key]?.value.booleanValue ?? defaultVal;
-    const enabled = await getFeatureFlag(key, defaultValue);
-    return enabled;
-  };
+  const checkAsyncEnabledFeatureFlag = useCallback(
+    async (key: string, defaultVal = false): Promise<boolean> => {
+      const defaultValue = cacheFlags[key]?.value.booleanValue ?? defaultVal;
+      return getFeatureFlag(key, defaultValue);
+    },
+    [cacheFlags, getFeatureFlag],
+  );
 
   // Utilize when polling is enabled (ON)
-  const checkEnabledFeatureFlag = (key: string, defaultVal?: boolean): boolean => {
-    return cacheFlags[key]?.value.booleanValue ?? defaultVal ?? false;
-  };
+  const checkEnabledFeatureFlag = useCallback(
+    (key: string, defaultVal = false): boolean => {
+      return cacheFlags[key]?.value.booleanValue ?? defaultVal;
+    },
+    [cacheFlags],
+  );
 
   // Subscribe to flag updates
   useEffect(() => {
@@ -48,14 +46,21 @@ export const IntegratedNumeratorProvider: React.FC<Props> = ({ children }) => {
     return unregister;
   }, []);
 
+  return { checkEnabledFeatureFlag, checkAsyncEnabledFeatureFlag };
+};
+
+// Create a context for the SDK
+export const IntegratedNumeratorContext = createContext<IntegratedNumeratorContextType | undefined>(undefined);
+
+type Props = {
+  children: React.ReactNode;
+};
+
+export const IntegratedNumeratorProvider: React.FC<Props> = ({ children }) => {
+  const featureFlagActions = useNumeratorFeatureFlags();
+
   return (
-    <IntegratedNumeratorContext.Provider
-      value={{
-        checkEnabledFeatureFlag,
-        checkAsyncEnabledFeatureFlag,
-      }}>
-      {children}
-    </IntegratedNumeratorContext.Provider>
+    <IntegratedNumeratorContext.Provider value={featureFlagActions}>{children}</IntegratedNumeratorContext.Provider>
   );
 };
 
