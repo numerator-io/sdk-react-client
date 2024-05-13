@@ -1,33 +1,33 @@
 import { useEffect, useState } from 'react';
-import Header from './components/Header';
 import { useNumeratorContext } from '@numerator-io/sdk-react-client';
+
+import Header from './components/Header';
 import PetGameUI from './components/PetGameUI';
 import { useIntegratedNumeratorContext } from './providers/IntegratedNumeratorProvider';
+import { AnimalInfo } from './types';
+import { getNewAnimalInfo } from './utils/common';
+
+const default_off_img_size = 300;
 
 function App() {
-  const [isLandAnimal, setLandAnimal] = useState<boolean>(true); // true for land, false for sea
-  const [loading, setLoading] = useState<boolean>(false); // true for land, false for sea
-  const { handleFlagUpdated, getFeatureFlag, startPolling } = useNumeratorContext();
-  const { checkEnabledFeatureFlag } = useIntegratedNumeratorContext();
+  const [imgSize, setImgSize] = useState<number>(default_off_img_size); // true for land, false for sea
+  const [loading, setLoading] = useState<boolean>(false);
+  const { getFeatureFlag } = useNumeratorContext();
 
-  /******** Example of using an event listener to respond to periodic updates of a feature flag ********/
-  // Subscribe to flag updates to adjust the displayed animal type based on the 'enable_land_pet' flag.
+  const { checkEnabledFeatureFlag, checkAsyncEnabledFeatureFlag } = useIntegratedNumeratorContext();
+  const isLandAnimal = checkEnabledFeatureFlag('enable_land_pet', false); // use Polling
+  const [animalInfo, setAnimalInfo] = useState<AnimalInfo>({});
+
   useEffect(() => {
-    const unregister = handleFlagUpdated((flags) => {
-      console.log('Updated flags:', flags);
-      const typeOfAnimal = flags['enable_land_pet'].value.booleanValue ?? false;
-      setLandAnimal(typeOfAnimal);
-    });
-    // Clean up by unregistering the callback when the component unmounts or dependencies change.
-    return unregister;
-  }, [handleFlagUpdated]);
+    onQuestionChange();
+  }, [isLandAnimal]);
 
   /******** Example of manually get updated flag value ********/
-  const onGetFlag = async () => {
+  const onGetFlagImgSize = async () => {
     setLoading(true);
     try {
-      const typeOfAnimal = await getFeatureFlag('enable_land_pet', false);
-      setLandAnimal(typeOfAnimal);
+      const gotImgSize = await getFeatureFlag('image_size', default_off_img_size);
+      setImgSize(gotImgSize);
     } catch (e) {
       console.log(e);
     } finally {
@@ -35,35 +35,22 @@ function App() {
     }
   };
 
-  /******** Example of manually get updated flag value ********/
-  const onGetFlagIntegrated = async () => {
-    setLoading(true);
-    try {
-      const typeOfAnimal = await checkEnabledFeatureFlag('enable_land_pet', false);
-      setLandAnimal(typeOfAnimal);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onStartPolling = () => {
-    startPolling();
+  const onQuestionChange = () => {
+    const newAnimal = getNewAnimalInfo(animalInfo, isLandAnimal);
+    setAnimalInfo(newAnimal);
   };
 
   const ActionBar = () => {
     return (
       <div className="box mr-5">
-        <button className="button button--pan" onClick={onStartPolling}>
-          <span>Start polling</span>
+        <button className="button button--pan" onClick={onGetFlagImgSize}>
+          <span>Get flag img_size</span>
         </button>
-        <span>Polling status: running...</span>
+        <span>flag img_size: {loading ? 'loading...' : imgSize}</span>
         <div className="h-5"></div>
-        <button className="button button--pan" onClick={onGetFlagIntegrated}>
-          <span>Get</span>
+        <button className="button button--pan" onClick={onQuestionChange}>
+          <span>Next question</span>
         </button>
-        <span>enable_land_pet: {loading ? 'loading...' : isLandAnimal ? 'True' : 'False'}</span>
       </div>
     );
   };
@@ -73,7 +60,7 @@ function App() {
       <Header />
       <div className="flex justify-center items-start h-fit">
         <ActionBar />
-        <PetGameUI animalType={isLandAnimal} />
+        <PetGameUI animalInfo={animalInfo} imgSize={imgSize} />
       </div>
     </div>
   );

@@ -106,12 +106,16 @@ input:focus + .line::after {
   position: relative;
 }
 
+.field ::placeholder {
+  color: black;
+}
+
 .field .line {
   width: 100%;
   height: 3px;
   position: absolute;
   bottom: -8px;
-  background: #bdc3c7;
+  background: #16364b;
 }
 
 .field .line::after {
@@ -121,7 +125,7 @@ input:focus + .line::after {
   height: 3px;
   transform: scaleX(0);
   transition: transform 0.3s ease;
-  background: #1abc9c;
+  background: #0b4f41;
 }
 
 .button {

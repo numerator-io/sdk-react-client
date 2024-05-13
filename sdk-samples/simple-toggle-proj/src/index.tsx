@@ -13,7 +13,7 @@ root.render(
     <NumeratorProvider
       configClient={{
         baseUrl: 'https://service-platform.dev.numerator.io',
-        apiKey: 'NUM.PbmFqVAzzHbUlieb1f51Fg==.5BsoRn9KBLCTMOiEmBxzX2hgEsP3raI61bXQ4dRKCXhzyzGNcyII+FWTUipNHi+E',
+        apiKey: 'NUM.wE4ZhPKWanTQWH/lA1NWzw==.2PxdH5F1j7Afxu55+Tl3voTDZ6WjBKmYiteJtZaI8P/QCWBr9+rFwXCh1kbnOTt8',
         pollingInterval: 5000, // 5 seconds polling to get new feature flags
       }}
       defaultContext={{}}

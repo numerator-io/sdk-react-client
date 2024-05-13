@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
+
 import { AnimalInfo } from '../../types';
-import { landAnimals, seaAnimals } from '../../constants';
 import '../../styles.css';
 
 interface PetGameUIProps {
-  animalType: boolean;
+  animalInfo: AnimalInfo;
+  imgSize: number;
 }
 
-const PetGameUI: React.FC<PetGameUIProps> = ({ animalType }) => {
-  const animals = animalType ? landAnimals : seaAnimals;
-  const randomIndex = Math.floor(Math.random() * animals.length);
-  const animalInfo: AnimalInfo = animals[randomIndex];
-
+const PetGameUI: React.FC<PetGameUIProps> = ({ animalInfo, imgSize }) => {
   const [guess, setGuess] = useState('');
 
   const onCheck = (answer: string) => {
-    if (answer === animalInfo.name) {
+    if (answer.toLowerCase() === animalInfo.name?.toLowerCase()) {
       alert('Correct answer');
     } else {
       alert('Wrong answer');
@@ -24,7 +21,7 @@ const PetGameUI: React.FC<PetGameUIProps> = ({ animalType }) => {
 
   return (
     <>
-      <div className="card">
+      <div className="card" style={{ width: imgSize }}>
         <img
           className="card__img"
           src={
@@ -34,7 +31,7 @@ const PetGameUI: React.FC<PetGameUIProps> = ({ animalType }) => {
           alt="animal to guess"
         />
         <span className="card__footer">
-          <span>What kind of {animalInfo.type} animal is this?</span>
+          <span>What {animalInfo.type} animal is this?</span>
           <div className="field">
             <input
               type="text"
