@@ -14,6 +14,8 @@ To run this sample, simply execute `yarn start` in your terminal.
 
 - **NumeratorProvider Usage**: Alternatively, you can directly use methods provided by `NumeratorProvider` to suit your specific requirements.
 
+- **Testing with Jest**: If you're interested in unit testing with Jest and want to learn how to mock flags and create unit tests for your components, you can find an example in the [App.test.tsx](./src/App.test.tsx) file.
+
 ## How to Explore
 
 1. Begin by examining the implementation of the `IntegratedNumeratorProvider`. This component demonstrates how to effectively integrate the Numerator Provider's functionality into your application.
