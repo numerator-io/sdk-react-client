@@ -16,6 +16,7 @@ import {
   FlagCollection,
   FlagVariationValue,
 } from '@/client/type.client';
+import { getHeaderValue } from '@/util';
 
 export class NumeratorClient {
   private apiClient: ApiClient;
@@ -137,7 +138,10 @@ export class NumeratorClient {
         return Promise.reject(response.error as ErrorResponse);
       }
 
-      return { flags: response.data?.flags, etag: response.headers.get('ETag') };
+      // Use the utility function to get the ETag header value safely
+      const etag = getHeaderValue(response.headers, 'ETag');
+      
+      return { flags: response.data?.flags, etag: etag };
     } catch (error: any) {
       console.warn('Error fetching featureFlagCollectionPolling due to: [', error, ']');
       return Promise.reject(error);

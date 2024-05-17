@@ -1,4 +1,4 @@
-import { deepCopy, mapArrayToRecord, sleep, withTimeout, areObjectsEqual } from '../../main/util';
+import { deepCopy, mapArrayToRecord, sleep, withTimeout, areObjectsEqual, getHeaderValue } from '@/util';
 
 describe('Utility Functions', () => {
   describe('deepCopy', () => {
@@ -73,3 +73,44 @@ describe('areObjectsEqual', () => {
       expect(areObjectsEqual(obj1, obj3)).toBe(false);
   });
 });
+
+describe('getHeaderValue', () => {
+  it('returns the correct value for a given key when headers is an instance of Headers', () => {
+    // Mocking Headers instance with a 'get' method
+    const headers = new Headers();
+    headers.append('ETag', '12345');
+    headers.append('Content-Type', 'application/json');
+
+    expect(getHeaderValue(headers, 'ETag')).toBe('12345');
+    expect(getHeaderValue(headers, 'Content-Type')).toBe('application/json');
+  });
+
+  it('returns the correct value for a given key when headers is a plain object', () => {
+    const headers = {
+      ETag: 'abcde',
+      'Content-Type': 'text/plain',
+    };
+
+    expect(getHeaderValue(headers, 'ETag')).toBe('abcde');
+    expect(getHeaderValue(headers, 'Content-Type')).toBe('text/plain');
+  });
+
+  it('returns null if the key does not exist in headers object', () => {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+
+    // Testing with Headers instance
+    expect(getHeaderValue(headers, 'ETag')).toBeNull();
+
+    // Testing with plain object
+    const simpleHeaders = { 'Content-Type': 'application/json' };
+    expect(getHeaderValue(simpleHeaders, 'ETag')).toBeUndefined();
+  });
+
+  it('returns null if headers is undefined or not an object', () => {
+    expect(getHeaderValue(null, 'ETag')).toBeNull();
+    expect(getHeaderValue(undefined, 'ETag')).toBeNull();
+    expect(getHeaderValue('not-an-object', 'ETag')).toBeNull();
+  });
+});
+

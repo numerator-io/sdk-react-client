@@ -60,35 +60,49 @@ export const snakeToCamel = (obj: any): any => {
  * @param secondObject  _ the second records object.
  */
 export const areObjectsEqual = (firstObject?: Record<string, any>, secondObject?: Record<string, any>): boolean => {
-  if(!firstObject || !secondObject) return false
+  if (!firstObject || !secondObject) return false;
   // Check if the number of keys are equal
   const keys1 = Object.keys(firstObject);
   const keys2 = Object.keys(secondObject);
   if (keys1.length !== keys2.length) {
-      return false;
+    return false;
   }
 
   // Check if each key-value pair matches
   for (const key of keys1) {
-      // Check if the key exists in both objects
-      if (!(key in secondObject)) {
-          return false;
-      }
+    // Check if the key exists in both objects
+    if (!(key in secondObject)) {
+      return false;
+    }
 
-      // Check if the values are equal
-      const value1 = firstObject[key];
-      const value2 = secondObject[key];
-      if (value1 !== value2) {
-          // If the values are objects, recursively check them
-          if (typeof value1 === 'object' && typeof value2 === 'object') {
-              if (!areObjectsEqual(value1, value2)) {
-                  return false;
-              }
-          } else {
-              return false;
-          }
+    // Check if the values are equal
+    const value1 = firstObject[key];
+    const value2 = secondObject[key];
+    if (value1 !== value2) {
+      // If the values are objects, recursively check them
+      if (typeof value1 === 'object' && typeof value2 === 'object') {
+        if (!areObjectsEqual(value1, value2)) {
+          return false;
+        }
+      } else {
+        return false;
       }
+    }
   }
 
   return true;
-}
+};
+
+/**
+ * Get value of key in headers
+ * @param headers The headers.
+ * @param key The key in headers.
+ */
+export const getHeaderValue = (headers: any, key: string) => {
+  if (headers instanceof Headers) {
+    return headers.get(key);
+  } else if (headers && typeof headers === 'object') {
+    return headers[key];
+  }
+  return null;
+};
