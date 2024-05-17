@@ -52,7 +52,6 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
       const result = await numeratorClient.fetchPollingFlag(defaultContextValues, currentEtag);
       if (result.flags) {
         // 200 OK
-        setCurrentEtag(result.etag);
         const newCache = result.flags.reduce(
           (acc, flag) => {
             acc[flag.key] = flag;
@@ -61,10 +60,8 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
           {} as Record<string, any>,
         );
         setCacheFlags(newCache);
+        setCurrentEtag(result.etag);
         updateListeners.forEach((listener) => listener(newCache)); // Notify all update listeners
-      } else {
-        // 304 NOT MODIFIED
-        updateListeners.forEach((listener) => listener(cacheFlags)); // Notify all update listeners
       }
     } catch (error) {
       errorListeners.forEach((listener) => listener(cacheFlags, error)); // Notify all error listeners
