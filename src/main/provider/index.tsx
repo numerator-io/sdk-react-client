@@ -50,16 +50,22 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const fetchPollingFeatureFlag = useCallback(async () => {
     try {
       const result = await numeratorClient.fetchPollingFlag(defaultContextValues, currentEtag);
-      setCurrentEtag(result.etag);
-      const newCache = result.flags.reduce(
-        (acc, flag) => {
-          acc[flag.key] = flag;
-          return acc;
-        },
-        {} as Record<string, any>,
-      );
-      setCacheFlags(newCache);
-      updateListeners.forEach((listener) => listener(newCache)); // Notify all update listeners
+      if (result.flags) {
+        // 200 OK
+        setCurrentEtag(result.etag);
+        const newCache = result.flags.reduce(
+          (acc, flag) => {
+            acc[flag.key] = flag;
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+        setCacheFlags(newCache);
+        updateListeners.forEach((listener) => listener(newCache)); // Notify all update listeners
+      } else {
+        // 304 NOT MODIFIED
+        updateListeners.forEach((listener) => listener(cacheFlags)); // Notify all update listeners
+      }
     } catch (error) {
       errorListeners.forEach((listener) => listener(cacheFlags, error)); // Notify all error listeners
     }

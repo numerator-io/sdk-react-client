@@ -47,7 +47,7 @@ interface FeatureFlagConfigListingResponse extends PaginationResponse<FeatureFla
     data: FeatureFlagConfig[];
 }
 interface FeatureFlagPollingResponse {
-    flags: FlagCollection[];
+    flags: FlagCollection[] | undefined;
     etag: string;
 }
 type VariationKeyType = 'stringValue' | 'booleanValue' | 'longValue' | 'doubleValue';

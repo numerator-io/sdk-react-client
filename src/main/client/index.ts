@@ -77,7 +77,7 @@ export class NumeratorClient {
 
   async featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig> {
     try {
-      const url = `${END_POINT_FEATURE_FLAG_CONFIG_BY_KEY}?key=${key}`
+      const url = `${END_POINT_FEATURE_FLAG_CONFIG_BY_KEY}?key=${key}`;
       const response = await this.apiClient.request<FeatureFlagConfig>({
         method: 'GET',
         endpoint: url,
@@ -122,10 +122,7 @@ export class NumeratorClient {
     }
   }
 
-  async fetchPollingFlag(
-    context: Record<string, any>,
-    eTag?: string | undefined,
-  ): Promise<FeatureFlagPollingResponse> {
+  async fetchPollingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse> {
     try {
       const headers = !!eTag ? { 'If-None-Match': eTag } : {};
       const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
@@ -140,11 +137,7 @@ export class NumeratorClient {
         return Promise.reject(response.error as ErrorResponse);
       }
 
-      if (!response.data) {
-        return this.handleFeatureFlagNotFound();
-      }
-
-      return { flags: response.data.flags, etag: response.headers['eTag'] };
+      return { flags: response.data?.flags, etag: response.headers.get('ETag') };
     } catch (error: any) {
       console.warn('Error fetching featureFlagCollectionPolling due to: [', error, ']');
       return Promise.reject(error);
