@@ -26,6 +26,12 @@ export class ApiClient {
         headers,
         body: JSON.stringify(data),
       });
+
+      // Handle 304 Not Modified response
+      if (response.status === 304) {
+        return {};
+      }
+
       // Check if the request was successful
       if (!response.ok) {
         throw new Error('Network response was not ok');

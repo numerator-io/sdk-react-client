@@ -60,7 +60,7 @@ export interface FeatureFlagConfigListingResponse extends PaginationResponse<Fea
 }
 
 export interface FeatureFlagPollingResponse {
-  flags: FlagCollection[],
+  flags: FlagCollection[] | undefined,
   etag: string
 }
 // --- Types for Feature Flag --- //

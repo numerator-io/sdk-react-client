@@ -54,7 +54,7 @@ describe('NumeratorClient', () => {
 
       const numeratorClient = new NumeratorClient(mockConfig);
       const result = await numeratorClient.fetchPollingFlag({ userId: 'user123' });
-      expect(result.flags.toString()).toEqual(data.toString());
+      expect(result.flags?.toString()).toEqual(data.toString());
     });
     it('should fetch featureFlagPolling fail', async () => {
       const error = { message: 'Error fetching featureFlagCollectionPolling', errorCode: 'fetch_error', errorStatus: 500 };
