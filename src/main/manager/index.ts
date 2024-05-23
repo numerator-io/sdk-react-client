@@ -180,6 +180,9 @@ class NumeratorFlagsManager {
 
   startPolling() {
     this.isPolling = true;
+    if (this.pollingIntervalId) {
+      clearInterval(this.pollingIntervalId);
+    }
     this.pollingIntervalId = setInterval(() => this.fetchPollingFeatureFlag(), this.configClient.pollingInterval || POLLING_INTERVAL);
   }
 
