@@ -242,6 +242,36 @@ type FlagUpdatedCallback = (updatedData: Record<string, FlagCollection>) => void
  */
 type FlagUpdatedErrorCallback = (latestData: Record<string, FlagCollection>, error: any) => void;
 
+declare class NumeratorFlagsManager {
+    private isPolling;
+    private cacheFlags;
+    private numeratorClient;
+    private flags;
+    private defaultContext;
+    private configClient;
+    private currentEtag?;
+    private updateListeners;
+    private errorListeners;
+    private pollingIntervalId?;
+    constructor(configClient: ConfigClient, defaultContext: Record<string, any>, loadPolling?: boolean);
+    private initializeNumeratorClient;
+    private fetchPollingFeatureFlag;
+    flagValueByKey(key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue>;
+    featureFlags(): Promise<FeatureFlagConfig[]>;
+    booleanFlagVariationDetail(key: string, defaultVal: boolean, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<FlagEvaluationDetail<boolean>>;
+    numberFlagVariationDetail(key: string, defaultVal: number, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<FlagEvaluationDetail<number>>;
+    stringFlagVariationDetail(key: string, defaultVal: string, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<FlagEvaluationDetail<string>>;
+    initFeatureFlag(key: string, defaultVal: any): void;
+    getFeatureFlag(key: string, defaultVal: any, context?: Record<string, any> | undefined, useDefaultContext?: boolean): Promise<any>;
+    startPolling(): void;
+    stopPolling(): void;
+    restartPolling(): void;
+    handleFlagUpdated(callback: FlagUpdatedCallback): () => void;
+    handleFlagUpdatedError(callback: FlagUpdatedErrorCallback): () => void;
+    getCacheFlags(): Record<string, FlagCollection>;
+    getIsPolling(): boolean;
+}
+
 declare const NumeratorProvider: React.FC<NumeratorProviderProps>;
 declare const useNumeratorContext: () => NumeratorContextType;
 
@@ -378,4 +408,4 @@ declare const useMockNumeratorProvider: (props?: MockNumeratorProviderProps) => 
  */
 declare const resetNumeratorMocks: () => void;
 
-export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, type FlagUpdatedCallback, type FlagUpdatedErrorCallback, FlagValueTypeEnum, type FlagVariationValue, type MockNumeratorProviderProps, NumeratorClient, type NumeratorContextType, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, addMockedFlag, mockFlags, removeMockedFlag, resetNumeratorMocks, useMockNumeratorProvider, useNumeratorContext };
+export { type ApiClientInterface, type ApiRequestOptions, type ApiResponse, type ConfigClient, type ErrorResponse, type FeatureFlagConfig, type FeatureFlagConfigListingRequest, type FeatureFlagConfigListingResponse, type FeatureFlagPollingResponse, type FeatureFlagValueByKeyRequest, type FlagCollection, type FlagEvaluationDetail, FlagStatusEnum, type FlagUpdatedCallback, type FlagUpdatedErrorCallback, FlagValueTypeEnum, type FlagVariationValue, type MockNumeratorProviderProps, NumeratorClient, type NumeratorContextType, NumeratorFlagsManager, NumeratorProvider, type NumeratorProviderProps, type PaginationRequest, type PaginationResponse, type VariationKeyType, type VariationValue, addMockedFlag, mockFlags, removeMockedFlag, resetNumeratorMocks, useMockNumeratorProvider, useNumeratorContext };
