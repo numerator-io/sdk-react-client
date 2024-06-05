@@ -183,6 +183,14 @@ class NumeratorFlagsManager {
     if (this.pollingIntervalId) {
       clearInterval(this.pollingIntervalId);
     }
+    /**
+     * Executes the fetchPollingFeatureFlag method after a delay of 10 milliseconds.
+     * This is done using the setTimeout function, which schedules a function to be run after a specified delay.
+     * The delay is introduced to ensure that all the initializations are completed before the fetch operation begins.
+     * Without this delay, there could be a chance that the fetch operation might execute before the necessary initializations,
+     * leading to potential errors or unexpected behavior.
+     */
+    setTimeout(() => this.fetchPollingFeatureFlag(), 10);
     this.pollingIntervalId = setInterval(() => this.fetchPollingFeatureFlag(), this.configClient.pollingInterval || POLLING_INTERVAL);
   }
 
