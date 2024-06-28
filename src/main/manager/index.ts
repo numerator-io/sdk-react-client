@@ -20,15 +20,17 @@ class NumeratorFlagsManager {
   private numeratorClient: NumeratorClient;
   private flags: Record<string, any> = {};
   private defaultContext: Record<string, any>;
+  private properties: Record<string, any>;
   private configClient: ConfigClient;
   private currentEtag?: string;
   private updateListeners: FlagUpdatedCallback[] = [];
   private errorListeners: FlagUpdatedErrorCallback[] = [];
   private pollingIntervalId?: NodeJS.Timeout;
 
-  constructor(configClient: ConfigClient, defaultContext: Record<string, any>, loadPolling = true) {
+  constructor(configClient: ConfigClient, defaultContext: Record<string, any>, properties: Record<string, any>, loadPolling = true) {
     this.numeratorClient = this.initializeNumeratorClient(configClient);
     this.defaultContext = defaultContext;
+    this.properties = properties;
     this.isPolling = loadPolling;
     this.configClient = configClient;
     if (loadPolling) {
@@ -46,7 +48,7 @@ class NumeratorFlagsManager {
 
   private async fetchPollingFeatureFlag() {
     try {
-      const result = await this.numeratorClient.fetchPollingFlag(this.defaultContext, this.currentEtag);
+      const result = await this.numeratorClient.fetchPollingFlag(this.defaultContext, this.properties, this.currentEtag);
       if (result.flags) {
         const newCache = result.flags.reduce(
           (acc, flag) => {

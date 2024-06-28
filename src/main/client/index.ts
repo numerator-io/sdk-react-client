@@ -123,14 +123,14 @@ export class NumeratorClient {
     }
   }
 
-  async fetchPollingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse> {
+  async fetchPollingFlag(context: Record<string, any>, properties: Record<string, any> | undefined, eTag?: string | undefined): Promise<FeatureFlagPollingResponse> {
     try {
       const headers = !!eTag ? { 'If-None-Match': eTag } : {};
       const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
         method: 'POST',
         headers: headers,
         endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POLLING,
-        data: { context },
+        data: { context, properties },
       });
 
       if (response.error) {
