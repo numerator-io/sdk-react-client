@@ -35,6 +35,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   children,
   configClient,
   defaultContext,
+  properties,
   loadPolling = true,
 }) => {
   // Initialize the SDK client
@@ -42,6 +43,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
   const [cacheFlags, setCacheFlags] = useState<Record<string, FlagCollection>>({});
   const [flags, setFlags] = useState<Record<string, any>>({});
   const [defaultContextValues, setDefaultContextValues] = useState(defaultContext);
+  const [propertiesContext, setPropertiesContext] = useState(properties);
   const [currentEtag, setCurrentEtag] = useState<string>();
   const [isPolling, setIsPolling] = useState(loadPolling);
   const [updateListeners, setUpdateListeners] = useState<FlagUpdatedCallback[]>([]);
@@ -49,7 +51,7 @@ export const NumeratorProvider: React.FC<NumeratorProviderProps> = ({
 
   const fetchPollingFeatureFlag = useCallback(async () => {
     try {
-      const result = await numeratorClient.fetchPollingFlag(defaultContextValues, currentEtag);
+      const result = await numeratorClient.fetchPollingFlag(defaultContextValues, propertiesContext, currentEtag);
       if (result.flags) {
         // 200 OK
         const newCache = result.flags.reduce(
