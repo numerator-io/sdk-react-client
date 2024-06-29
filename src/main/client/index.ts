@@ -130,11 +130,20 @@ export class NumeratorClient {
   ): Promise<FeatureFlagPollingResponse> {
     try {
       const headers = eTag ? { 'If-None-Match': eTag } : {};
+
+      // Prepare the request data
+      const data: { context: Record<string, any>; properties?: Record<string, any> } = { context };
+
+      // Only add properties if it's not empty
+      if (Object.keys(properties).length > 0) {
+        data.properties = properties;
+      }
+
       const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
         method: 'POST',
         headers: headers,
         endpoint: END_POINT_FEATURE_FLAG_COLLECTION_POLLING,
-        data: { context, properties },
+        data: data,
       });
 
       if (response.error) {
