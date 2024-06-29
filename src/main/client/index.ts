@@ -123,9 +123,13 @@ export class NumeratorClient {
     }
   }
 
-  async fetchPollingFlag(context: Record<string, any>, properties: Record<string, any> | undefined, eTag?: string | undefined): Promise<FeatureFlagPollingResponse> {
+  async fetchPollingFlag(
+    context: Record<string, any>,
+    properties: Record<string, any> = {},
+    eTag?: string
+  ): Promise<FeatureFlagPollingResponse> {
     try {
-      const headers = !!eTag ? { 'If-None-Match': eTag } : {};
+      const headers = eTag ? { 'If-None-Match': eTag } : {};
       const response = await this.apiClient.request<{ flags: FlagCollection[] }>({
         method: 'POST',
         headers: headers,
@@ -140,7 +144,7 @@ export class NumeratorClient {
 
       // Use the utility function to get the ETag header value safely
       const etag = getHeaderValue(response.headers, 'ETag');
-      
+
       return { flags: response.data?.flags, etag: etag };
     } catch (error: any) {
       console.warn('Error fetching featureFlagCollectionPolling due to: [', error, ']');

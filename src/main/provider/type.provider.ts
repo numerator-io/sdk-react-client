@@ -170,11 +170,6 @@ export interface NumeratorProviderProps {
   defaultContext: Record<string, any>;
 
   /**
-   * The properties client send to NumeratorProvider
-   */
-  properties: Record<string, any>;
-
-  /**
    * Start to load polling
    */
   loadPolling?: boolean;
