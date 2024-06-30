@@ -105,7 +105,7 @@ declare class NumeratorClient {
     allFeatureFlagsConfig(): Promise<FeatureFlagConfig[]>;
     featureFlagConfigByKey(key: string): Promise<FeatureFlagConfig>;
     getFeatureFlagByKey<T>(request: FeatureFlagValueByKeyRequest): Promise<FlagVariationValue>;
-    fetchPollingFlag(context: Record<string, any>, eTag?: string | undefined): Promise<FeatureFlagPollingResponse>;
+    fetchPollingFlag(context: Record<string, any>, properties?: Record<string, any>, eTag?: string): Promise<FeatureFlagPollingResponse>;
 }
 
 interface NumeratorContextType {
@@ -248,12 +248,13 @@ declare class NumeratorFlagsManager {
     private numeratorClient;
     private flags;
     private defaultContext;
+    private properties;
     private configClient;
     private currentEtag?;
     private updateListeners;
     private errorListeners;
     private pollingIntervalId?;
-    constructor(configClient: ConfigClient, defaultContext: Record<string, any>, loadPolling?: boolean);
+    constructor(configClient: ConfigClient, defaultContext: Record<string, any>, properties: Record<string, any>, loadPolling?: boolean);
     private initializeNumeratorClient;
     private fetchPollingFeatureFlag;
     flagValueByKey(key: string, context: Record<string, any> | undefined): Promise<FlagVariationValue>;

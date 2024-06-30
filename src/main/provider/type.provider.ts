@@ -168,6 +168,7 @@ export interface NumeratorProviderProps {
    * The default context client send to NumeratorProvider
    */
   defaultContext: Record<string, any>;
+
   /**
    * Start to load polling
    */
